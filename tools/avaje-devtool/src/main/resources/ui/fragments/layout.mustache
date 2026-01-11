@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>hello world</title>
+  <link rel="stylesheet" href="/static/tailwind.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/htmx.min.js"></script>
+  <script src="/static/basecoat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
+</head>
+<body>
+<aside id="sidebar" class="sidebar " data-side="left" aria-hidden="true" data-sidebar-initialized="true" inert=""></aside>
+
+{{> fragments/header }}
+
+<main class="p-4" id="content">
+  {{$body}}Empty body{{/body}}
+</main>
+
+<footer>
+</footer>
+
+</body>
+  <script>
+  document.body.addEventListener('htmx:afterSwap', function(evt) {
+    document.querySelectorAll('pre code').forEach((el) => {
+      hljs.highlightElement(el);
+    });
+  });
+
+  </script>
+</html>

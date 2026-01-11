@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.ebean.tools</groupId>
+  <artifactId>ebean-init</artifactId>
+  <version>1.10-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>io.ebean</groupId>
+      <artifactId>ebean</artifactId>
+      <version>11.41.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.ebean</groupId>
+      <artifactId>ebean-querybean</artifactId>
+      <version>11.41.1</version>
+    </dependency>
+
+    <!-- Annotation processor-->
+
+    <dependency>
+      <groupId>io.ebean</groupId>
+      <artifactId>querybean-generator</artifactId>
+      <version>11.41.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Test dependencies-->
+
+    <dependency>
+      <groupId>io.ebean.test</groupId>
+      <artifactId>ebean-test-config</artifactId>
+      <version>11.41.1</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+  <build>
+    <finalName>app.jar</finalName>
+    <plugins>
+
+      <plugin>
+        <groupId>io.avaje.maven</groupId>
+        <artifactId>tiles-maven-plugin</artifactId>
+        <version>1.2</version>
+        <extensions>true</extensions>
+        <configuration>
+          <tiles>
+            <tile>io.ebean.tile:enhancement:11.41.1</tile>
+          </tiles>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>
