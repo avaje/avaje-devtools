@@ -167,15 +167,6 @@ public class DetectionMeta {
     gradle = true;
   }
 
-  boolean isNewProject() {
-    if (mavenPom != null) {
-      return mavenPom.isNewProject();
-    } else if (gradleBuild != null) {
-      return gradleBuild.isNewProject();
-    }
-    return false;
-  }
-
   public MavenPom getMavenPom() {
     return mavenPom;
   }

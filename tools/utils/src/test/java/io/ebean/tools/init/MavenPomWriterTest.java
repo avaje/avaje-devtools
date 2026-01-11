@@ -22,12 +22,6 @@ public class MavenPomWriterTest {
     return add;
   }
 
-  private List<String> createTiles(String s) {
-    List<String> tiles = new ArrayList<>();
-    tiles.add(s);
-    return tiles;
-  }
-
   @Test
   public void write() throws IOException {
 
@@ -37,7 +31,6 @@ public class MavenPomWriterTest {
     File out = new File("target/one-pom2.xml");
     MavenPomWriter writer = new MavenPomWriter(pom, out);
     writer.addDependencies(createDependencies());
-    writer.addTiles(createTiles("io.ebean.tile:enhancement:11.41.1"));
     writer.writeToFile();
 
     File compare = new File("src/test/resources/maven/one-pom2.xml");
@@ -53,7 +46,6 @@ public class MavenPomWriterTest {
     File out = new File("target/nothing-pom2.xml");
     MavenPomWriter writer = new MavenPomWriter(pom, out);
     writer.addDependencies(createDependencies());
-    writer.addTiles(createTiles("io.ebean.tile:enhancement:11.41.1"));
     writer.writeToFile();
 
     File compare = new File("src/test/resources/maven/nothing-pom2.xml");
@@ -69,7 +61,6 @@ public class MavenPomWriterTest {
     File out = new File("target/noDependencies-pom2.xml");
     MavenPomWriter writer = new MavenPomWriter(pom, out);
     writer.addDependencies(createDependencies());
-    writer.addTiles(createTiles("io.ebean.tile:enhancement:11.41.1"));
     writer.writeToFile();
 
     File compare = new File("src/test/resources/maven/noDependencies-pom2.xml");
@@ -85,7 +76,6 @@ public class MavenPomWriterTest {
     File out = new File("target/noDependenciesBP-pom2.xml");
     MavenPomWriter writer = new MavenPomWriter(pom, out);
     writer.addDependencies(createDependencies());
-    writer.addTiles(createTiles("io.ebean.tile:enhancement:11.41.1"));
     writer.writeToFile();
 
     File compare = new File("src/test/resources/maven/noDependenciesBP-pom2.xml");
@@ -95,17 +85,32 @@ public class MavenPomWriterTest {
   @Test
   public void write_noBuild() throws IOException {
 
+    String pl = """
+            <plugin>
+              <groupId>io.avaje.maven</groupId>
+              <artifactId>tiles-maven-plugin</artifactId>
+              <version>1.2</version>
+              <extensions>true</extensions>
+              <configuration>
+                <tiles>
+                  <tile>io.ebean.tile:enhancement:11.41.1</tile>
+                </tiles>
+              </configuration>
+            </plugin>
+      """;
+
+
     File example = new File("src/test/resources/maven/noBuild-pom.xml");
     MavenPom pom = new MavenPom(example);
 
     File out = new File("target/noBuild-pom2.xml");
     MavenPomWriter writer = new MavenPomWriter(pom, out);
     writer.addDependencies(createDependencies());
-    writer.addTiles(createTiles("io.ebean.tile:enhancement:11.41.1"));
+    writer.addBuildPlugin(List.of(pl));
     writer.writeToFile();
 
     File compare = new File("src/test/resources/maven/noBuild-pom2.xml");
-    assertThat(out).hasSameContentAs(compare);
+    assertThat(out).hasSameTextualContentAs(compare);
   }
 
   @Test
@@ -117,7 +122,6 @@ public class MavenPomWriterTest {
     File out = new File("target/noBuildPlugins-pom2.xml");
     MavenPomWriter writer = new MavenPomWriter(pom, out);
     writer.addDependencies(createDependencies());
-    writer.addTiles(createTiles("io.ebean.tile:enhancement:11.41.1"));
     writer.writeToFile();
 
     File compare = new File("src/test/resources/maven/noBuildPlugins-pom2.xml");
@@ -132,8 +136,6 @@ public class MavenPomWriterTest {
 
     File out = new File("target/withEbean-pom2.xml");
     MavenPomWriter writer = new MavenPomWriter(pom, out);
-//    writer.addDependencies(add);
-    writer.addTiles(createTiles("io.ebean.tile:foo:11.41.1"));
     writer.writeToFile();
 
     File compare = new File("src/test/resources/maven/withEbean-pom2.xml");

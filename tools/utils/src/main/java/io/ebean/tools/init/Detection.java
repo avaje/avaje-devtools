@@ -375,10 +375,6 @@ public class Detection {
     return meta.unexpectedLocation();
   }
 
-  boolean isNewProject() {
-    return !ebeanManifestFound && !testProperties && meta.isNewProject();
-  }
-
   public void setEntityBeanPackage(String entityPackage) {
     this.entityPackage = entityPackage;
   }

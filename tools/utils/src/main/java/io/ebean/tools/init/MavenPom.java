@@ -1,25 +1,40 @@
 package io.ebean.tools.init;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MavenPom {
 
+
+  public enum Section {
+    PROFILES,
+    DEP_MGMT,
+    DEP,
+    BUILD
+  }
   private final File pom;
 
-  private List<String> lines;
+  private final List<String> lines;
 
-  private List<MavenDependency> dependencies = new ArrayList<>();
-  private List<MavenPlugin> plugins = new ArrayList<>();
+  private final List<Section> sectionOrdering = new ArrayList<>();
 
-  private MavenPlugin tilesPlugin;
+  private final List<MavenDependency> dependencies = new ArrayList<>();
+  private final Set<String> dependencyKeyset = new HashSet<>();
+  private final List<MavenPlugin> plugins = new ArrayList<>();
+
+  private int profilesStart;
+  private int profilesEnd = Integer.MAX_VALUE;
+
+
+  private int dependencyManagementStart;
+  private int dependencyManagementEnd = Integer.MAX_VALUE;
 
   private int dependenciesStart;
   private int dependenciesEnd = Integer.MAX_VALUE;
+
   private int dependencyStart;
   private int pluginStart;
 
@@ -36,6 +51,9 @@ public class MavenPom {
   private String dependencyGroupId;
   private String dependencyArtifactId;
   private String dependencyScope;
+//  private String dependencyType;
+//  private String dependencyOptional;
+//  private String dependencyClassifier;
 
   private String baseIndent = "  ";
 
@@ -45,61 +63,98 @@ public class MavenPom {
     parseLines();
   }
 
-  boolean isNewProject() {
-    return (tilesPlugin == null || !tilesPlugin.contains("io.ebean.tile:enhancement:")) && !hasDependencyEbean();
-  }
-
   String getBaseIndent() {
     return baseIndent;
+  }
+
+  private void setBaseIndent(String line) {
+    final int pos = line.indexOf('<');
+    baseIndent = line.substring(0, pos);
   }
 
   List<String> getLines() {
     return lines;
   }
 
-  int getDependenciesAfterLine() {
+  public List<Section> sectionOrdering() {
+    return sectionOrdering;
+  }
 
+  public boolean sectionExists(Section section) {
+    return sectionOrdering.contains(section);
+  }
+
+
+  int injectDependenciesAfterLine() {
     final MavenDependency nonTestDependency = findLastNonTestDependency();
-    if (nonTestDependency == null) {
-      return dependenciesStart + 1;
+    if (nonTestDependency != null) {
+      return nonTestDependency.end + 1;
     }
-    return nonTestDependency.end + 1;
+    return dependenciesEnd - 1; // dependenciesStart + 1;
   }
 
   int getBuildPluginsStart() {
     return buildPluginsStart + 1;
   }
+  int getBuildPluginsEnd() {
+    return buildPluginsEnd;
+  }
+
+  int getProfilesEnd() {
+    return profilesEnd;
+  }
+
+  int getDependencyManagementEnd() {
+    return dependencyManagementEnd;
+  }
+
+  int getDependencyManagementStart() {
+    return dependencyManagementStart;
+  }
+
+  public int getDependenciesStart() {
+    return dependenciesStart;
+  }
+
+  public int getDependenciesEnd() {
+    return dependenciesEnd;
+  }
+
+  public int getProfilesStart() {
+    return profilesStart;
+  }
+
+  public boolean addProfilesTag() {
+    return profilesStart <= 0;
+  }
+
+  public boolean addDepMgmtTag() {
+    return dependencyManagementStart <= 0;
+  }
+
+  public boolean hasBuildPluginsTag() {
+    return buildPluginsStart > 0;
+  }
+
+  public boolean addBuildTag() {
+    return buildPluginsStart <= 0;
+  }
+
+  public boolean addDependenciesTag() {
+    return dependenciesStart <= 0;
+  }
+
 
   boolean hasDependencyEbean() {
     return hasDependency("io.ebean", "ebean");
   }
 
-  boolean hasDependencyEbeanQueryBean() {
-    return hasDependency("io.ebean", "ebean-querybean");
-  }
-
-  boolean hasDependencyEbeanQueryBeanGenerator() {
-    return hasDependency("io.ebean", "querybean-generator");
-  }
-
   boolean hasDependency(String groupId, String artifactId) {
-    for (MavenDependency dependency : dependencies) {
-      if (groupId.equals(dependency.groupId) && artifactId.equals(dependency.artifactId)) {
-        return true;
-      }
-    }
-    return false;
+    return dependencyKeyset.contains(groupId + ':' + artifactId);
   }
 
   /**
-   * Return the last non test dependency. New dependencies would be added after this.
-   */
-  MavenPlugin findTilesPlugin() {
-    return tilesPlugin;
-  }
-
-  /**
-   * Return the last non test dependency. New dependencies would be added after this.
+   * Return the last non-test dependency. New dependencies would be added after this.
    */
   MavenDependency findLastNonTestDependency() {
 
@@ -123,10 +178,27 @@ public class MavenPom {
     }
   }
 
-
   private void parseLine(String line, int lineIndex) {
-
+    if (profilesStart == 0 && line.contains("<profiles>")) {
+      sectionOrdering.add(Section.PROFILES);
+      profilesStart = lineIndex;
+      return;
+    }
+    if (profilesStart != 0 && line.contains("</profiles>")) {
+      profilesEnd = lineIndex;
+      return;
+    }
+    if (dependencyManagementStart == 0 && line.contains("<dependencyManagement>")) {
+      sectionOrdering.add(Section.DEP_MGMT);
+      dependencyManagementStart = lineIndex;
+      return;
+    }
+    if (dependencyManagementStart != 0 && line.contains("</dependencyManagement>")) {
+      dependencyManagementEnd = lineIndex;
+      return;
+    }
     if (dependenciesStart == 0 && line.contains("<dependencies>")) {
+      sectionOrdering.add(Section.DEP);
       dependenciesStart = lineIndex;
       setBaseIndent(line);
       return;
@@ -136,6 +208,7 @@ public class MavenPom {
       return;
     }
     if (buildStart == 0 && line.contains("<build>")) {
+      sectionOrdering.add(Section.BUILD);
       buildStart = lineIndex;
       setBaseIndent(line);
       return;
@@ -157,11 +230,6 @@ public class MavenPom {
     } else if (inBuildPlugins(lineIndex)) {
       parseBuildPlugins(line, lineIndex);
     }
-  }
-
-  private void setBaseIndent(String line) {
-    final int pos = line.indexOf('<');
-    baseIndent = line.substring(0, pos);
   }
 
   private boolean inBuildPlugins(int lineIndex) {
@@ -188,14 +256,7 @@ public class MavenPom {
   }
 
   private void addPlugin(int endLineIndex) {
-
-    MavenPlugin plugin = new MavenPlugin(pluginStart, endLineIndex, pluginGroupId, pluginArtifactId, pluginVersion);
-    plugins.add(plugin);
-
-    if (pluginArtifactId.equalsIgnoreCase("tiles-maven-plugin")) {
-      tilesPlugin = plugin;
-      plugin.setTiles(readTiles(endLineIndex));
-    }
+    plugins.add(new MavenPlugin(pluginStart, endLineIndex, pluginGroupId, pluginArtifactId, pluginVersion));
 
     pluginStart = 0;
     pluginGroupId = null;
@@ -203,19 +264,8 @@ public class MavenPom {
     pluginVersion = null;
   }
 
-  private List<String> readTiles(int endLineIndex) {
-    List<String> tiles = new ArrayList<>();
-    for (int i = pluginStart + 1; i < endLineIndex; i++) {
-      final String line = lines.get(i);
-      if (line.contains("<tile>")) {
-        tiles.add(extractFromLine("tile", line));
-      }
-    }
-    return tiles;
-  }
 
   private void parseDependencies(String line, int lineIndex) {
-
     if (line.contains("<exclusions>")) {
       currentlyExcludingDependencies = true;
     } else if (line.contains("</exclusions>")) {
@@ -232,17 +282,28 @@ public class MavenPom {
       extractArtifactId(line);
     } else if (line.contains("<scope>")) {
       extractScope(line);
+//    } else if (line.contains("<type>")) {
+//      dependencyType = extractFromLine("type", line);
+//    } else if (line.contains("<optional>")) {
+//      dependencyOptional = extractFromLine("optional", line);
+//    } else if (line.contains("<classifier>")) {
+//      dependencyClassifier = extractFromLine("classifier", line);
     } else if (line.contains("</dependency>")) {
       addDependency(lineIndex);
     }
   }
 
   private void addDependency(int endLineIndex) {
-    dependencies.add(new MavenDependency(dependencyStart, endLineIndex, dependencyGroupId, dependencyArtifactId, dependencyScope));
+    var dep = new MavenDependency(dependencyStart, endLineIndex, dependencyGroupId, dependencyArtifactId, dependencyScope);
+    dependencies.add(dep);
+    dependencyKeyset.add(dep.key());
     dependencyStart = 0;
     dependencyGroupId = null;
     dependencyArtifactId = null;
     dependencyScope = null;
+//    dependencyType = null;
+//    dependencyOptional = null;
+//    dependencyClassifier = null;
   }
 
   private void extractScope(String line) {
@@ -266,7 +327,6 @@ public class MavenPom {
 
 
   private List<String> readLines() {
-
     try {
       List<String> lines = new ArrayList<>();
       try (LineNumberReader reader = new LineNumberReader(new FileReader(pom))) {
@@ -277,8 +337,7 @@ public class MavenPom {
       }
       return lines;
     } catch (IOException e) {
-      e.printStackTrace();
-      return null;
+      throw new UncheckedIOException(e);
     }
   }
 
@@ -296,12 +355,12 @@ public class MavenPom {
 
   static class MavenPlugin {
 
-    List<String> tiles;
     final int start;
     final int end;
     final String groupId;
     final String artifactId;
     final String version;
+    List<String> tiles;
 
     private MavenPlugin(int start, int end, String groupId, String artifactId, String version) {
       this.start = start;
@@ -365,6 +424,10 @@ public class MavenPom {
       this.groupId = groupId;
       this.artifactId = artifactId;
       this.scope = scope;
+    }
+
+    public String key() {
+      return groupId + ':' + artifactId;
     }
   }
 

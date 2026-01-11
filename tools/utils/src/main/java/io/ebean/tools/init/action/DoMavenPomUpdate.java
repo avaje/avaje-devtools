@@ -28,7 +28,6 @@ public class DoMavenPomUpdate {
       MavenPomWriter writer = new MavenPomWriter(mavenPom, pomFile);
 
       writer.addDependencies(buildDependencies());
-      writer.addTiles(buildTiles());
       writer.writeToFile();
 
       // help.ackDone("...updated pom.xml adding dependencies and enhancement plugin");
@@ -39,11 +38,6 @@ public class DoMavenPomUpdate {
     }
   }
 
-  private List<String> buildTiles() {
-    List<String> tiles = new ArrayList<>();
-    tiles.add(dependency("ebean-tile","io.ebean.tile:enhancement:"+version));
-    return tiles;
-  }
 
   private List<Dependency> buildDependencies() {
 
