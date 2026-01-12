@@ -12,6 +12,7 @@ public class Main {
 
     static void main(String[] args) {
 
+    //  System.setProperty("java.library.path",);
         var server = Jex.create()
                 .configureWith(BeanScope.builder().build())
                 .port(Integer.getInteger("http.port", 8092)) // 8092
@@ -27,7 +28,6 @@ public class Main {
                 .height(800)
                 .url("http://localhost:" + port)
                 .build();
-
 
         wv.run();
         server.shutdown();

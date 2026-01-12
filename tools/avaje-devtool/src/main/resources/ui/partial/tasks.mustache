@@ -1,0 +1,18 @@
+<div class="grid grid-cols-2 gap-4">
+      <div class="pr-4">
+        <input class="input m-2" type="search"
+               name="search" placeholder="Search tasks..."
+               id="task-search-input"
+               hx-post="/search"
+               hx-trigger="input changed delay:200ms, keyup[key=='Enter']"
+               hx-target="#search-results"
+               ">
+
+        <div id="search-results" hx-trigger="keyup[ctrlKey&&key=='v']" hx-get="/cb"  hx-on::after-request="document.querySelector('#task-search-input').value = event.detail.xhr.responseText">
+        </div>
+      </div>
+      <div class="" id="detail-summary">
+          {{> partial/search-tasks }}
+      </div>
+      <p><small>Admin UI</small></p>
+</div>

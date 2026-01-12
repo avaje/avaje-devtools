@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,13 +23,17 @@ final class DataLoader {
         this.kBaseMetaJsonType = jsonb.type(KBaseMeta.class);
     }
 
-    static Data load(Jsonb jsonb, File dataDirectory) {
+  static Data load(Jsonb jsonb, String path) {
+    return new DataLoader(jsonb).load(new File(path));
+  }
+
+  static Data load(Jsonb jsonb, File dataDirectory) {
         return new DataLoader(jsonb).load(dataDirectory);
     }
 
     private Data load(File dataDirectory) {
         if (!dataDirectory.exists()) {
-            return new Data(List.of());
+            return new Data(new ArrayList<>());
         }
 
         List<KBase> kBases = fileStream(dataDirectory)

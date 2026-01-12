@@ -1,0 +1,14 @@
+<div class="grid grid-cols-1 gap-4">
+   <p>No sources are currently registered</p>
+   <div>
+     <form>
+       <label for="fileUpload" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Upload File</label>
+       <input class="input m-2" type="input" id="fileUpload" name="path"/>
+       <br/>
+       <button type="button" class="btn btn-primary" hx-post="/addSource" hx-target="#action-result">Add source</button>
+     </form>
+   </div>
+
+   <div id="action-result"></div>
+
+</div>

@@ -2,18 +2,27 @@
 <p>
   Refer <a target="_self" href="https://sdkman.io/install/">https://sdkman.io/install</a>
 </p>
-<pre>
+<form>
+<pre hx-post="/copyToClipboard" hx-target="#toaster">
   <code>curl -s "https://get.sdkman.io" | bash</code>
+  <textarea name="clip" style="display: none;">curl -s "https://get.sdkman.io" | bash</textarea>
 </pre>
+</form>
 
-<pre>
-    <code class="language-bash">source "$HOME/.sdkman/bin/sdkman-init.sh"</code>
+<form>
+<pre hx-post="/copyToClipboard" hx-target="#toaster">
+  <code class="language-bash">source "$HOME/.sdkman/bin/sdkman-init.sh"</code>
+  <textarea name="clip" style="display: none;">source "$HOME/.sdkman/bin/sdkman-init.sh</textarea>
 </pre>
+</form>
 
 <h3>Install Java</h3>
-<pre>
-    <code class="language-bash">sdk install java 25.0.1-graal</code>
+<form>
+<pre hx-post="/copyToClipboard" hx-target="#toaster">
+  <code class="language-bash">sdk install java 25.0.1-graal</code>
+  <textarea name="clip" style="display: none;">sdk install java 25.0.1-graal</textarea>
 </pre>
+</form>
 
 <h1>Install Maven</h1>
 <pre>

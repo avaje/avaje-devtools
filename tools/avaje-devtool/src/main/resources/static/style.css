@@ -14,3 +14,8 @@
 #detail-summary h1,h2 {
   font-size: calc(0.9rem + 0.6vw);
 }
+
+.btn-secondary:hover {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}

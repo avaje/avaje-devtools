@@ -1,0 +1,15 @@
+
+<table class="table">
+<tbody>
+{{#projects}}
+  <tr>
+    <td style="text-wrap-mode: wrap;">{{ name }}</td>
+    <td>{{ type }}</td>
+  </tr>
+{{/projects}}
+</tbody>
+</table>
+
+{{^projects}}
+<div>No projects found</div>
+{{/projects}}

@@ -1,53 +1,48 @@
 package io.avaje.tools.devtool.service;
 
 import io.avaje.inject.Component;
-import io.avaje.inject.PostConstruct;
-import io.avaje.jsonb.Jsonb;
 import io.avaje.tools.devtool.data.Data;
+import io.avaje.tools.devtool.data.MProjects;
 import io.avaje.tools.devtool.data.Task;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import static java.lang.System.Logger.Level.DEBUG;
 
 @Component
 public final class DataService {
 
     private static final System.Logger log = System.getLogger("app");
 
-    private final Jsonb jsonb;
-    private Data data = new Data(List.of());
+    private final ProjectsRepository repository;
 
-    DataService(Jsonb jsonb) {
-        this.jsonb = jsonb;
+    DataService(ProjectsRepository repository) {
+      this.repository = repository;
     }
 
     public Data data() {
-        return data;
+        return repository.data();
     }
 
     void refreshData(Data data) {
-        this.data = data;
+      repository.refreshData(data);
     }
 
-    @PostConstruct
-    void initialLoad() {
-        data = loadPath(System.getProperty("data.dir", "data"))
-                .or(() -> loadPath("avaje-devtool/data"))
-                .orElse(new Data(List.of()));
-    }
-
-    private Optional<Data> loadPath(String path) {
-        var dataDir = new File(path);
-        if (!dataDir.exists()) {
-            return Optional.empty();
-        }
-        log.log(DEBUG, "Load data from {0}", dataDir.getAbsolutePath());
-        return Optional.of(DataLoader.load(jsonb, dataDir));
-    }
+//    @PostConstruct
+//    void initialLoad() {
+//        data = loadPath(System.getProperty("data.dir", "data"))
+//                .or(() -> loadPath("avaje-devtool/data"))
+//                .orElse(new Data(List.of()));
+//    }
+//
+//    private Optional<Data> loadPath(String path) {
+//        var dataDir = new File(path);
+//        if (!dataDir.exists()) {
+//            return Optional.empty();
+//        }
+//        log.log(DEBUG, "Load data from {0}", dataDir.getAbsolutePath());
+//        return Optional.of(DataLoader.load(jsonb, dataDir));
+//    }
 
     public List<Task> searchTasks(String search, int limit) {
         if (search == null) return List.of();
@@ -64,11 +59,19 @@ public final class DataService {
         if (tokens == null || tokens.length == 0) {
             return List.of();
         }
-        return data.kbases().stream()
+        return data().kbases().stream()
                 .flatMap(kb -> kb.tasks().stream())
                 .filter(task -> task.matchAll(tokens))
                 .sorted()
                 .limit(limit)
                 .toList();
     }
+
+  public MProjects projects() {
+    return repository.projects();
+  }
+
+  public Optional<Data> addSource(String path) {
+    return repository.addSource(path);
+  }
 }
