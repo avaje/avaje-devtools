@@ -24,30 +24,22 @@
       <artifactId>slf4j-api</artifactId>
       <version>1.7.25</version>
     </dependency>
-
     <dependency>
       <groupId>io.ebean</groupId>
       <artifactId>ebean</artifactId>
       <version>11.41.1</version>
     </dependency>
-
     <dependency>
       <groupId>io.ebean</groupId>
       <artifactId>ebean-querybean</artifactId>
       <version>11.41.1</version>
     </dependency>
-
-    <!-- Annotation processor-->
-
     <dependency>
       <groupId>io.ebean</groupId>
       <artifactId>querybean-generator</artifactId>
       <version>11.41.1</version>
       <scope>provided</scope>
     </dependency>
-
-    <!-- Test dependencies-->
-
     <dependency>
       <groupId>io.ebean.test</groupId>
       <artifactId>ebean-test-config</artifactId>
@@ -55,8 +47,8 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
+
     <plugins>
 
       <plugin>
@@ -72,5 +64,7 @@
       </plugin>
 
     </plugins>
+
   </build>
+
 </project>
