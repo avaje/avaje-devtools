@@ -19,3 +19,22 @@
   background-color: var(--color-primary);
   color: var(--color-primary-foreground);
 }
+nav#top-nav a {
+  color: var(--color-foreground);
+  border-bottom: 3px solid var(--color-background);
+  cursor: pointer;
+  margin-right: 1rem;
+}
+nav#top-nav a:hover {
+  color: var(--color-amber-900); !important;
+  border-bottom: 3px solid var(--color-green-600);
+}
+
+nav#top-nav a.active {
+  border-bottom: 3px solid var(--color-green-600);
+  cursor: default;
+}
+nav#top-nav a.active :hover {
+  border-bottom: 3px solid var(--color-green-600);
+}
+

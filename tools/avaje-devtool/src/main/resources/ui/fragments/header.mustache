@@ -1,7 +1,7 @@
 <header class="bg-background sticky inset-x-0 top-0 isolate flex shrink-0 items-center gap-2 border-b z-10">
-    <div class="flex h-14 w-full items-center gap-2 px-4">
-        <button type="button" hx-get="/tasks" hx-target="#content" class="btn btn-secondary">tasks</button>
-        <button type="button" hx-get="/projects" hx-target="#content" class="btn btn-secondary">projects</button>
-        <button type="button" hx-get="/sources" hx-target="#content" class="btn btn-secondary">sources</button>
-    </div>
+    <nav id="top-nav" class="flex h-14 w-full items-center gap-2 px-4">
+        <a class="active" hx-get="/tasks" hx-target="#content">tasks</a>
+        <a class="" hx-get="/projects" hx-target="#content">projects</a>
+        <a class="" hx-get="/sources" hx-target="#content">sources</a>
+    </nav>
 </header>
