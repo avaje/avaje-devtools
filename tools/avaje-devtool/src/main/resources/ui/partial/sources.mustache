@@ -1,4 +1,4 @@
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-1 gap-4">
       <div class="pr-4">
         <input class="input m-2" type="search"
                name="search" placeholder="Search sources..."
@@ -6,9 +6,18 @@
                hx-trigger="input changed delay:200ms, keyup[key=='Enter'], load"
                hx-target="#search-results">
 
-        <div id="search-results"></div>
+        <div id="search-results">
+          <table class="table">
+          <tbody>
+          {{#sources}}
+            <tr>
+              <td style="text-wrap-mode: wrap;">{{ name }}</td>
+              <td>{{ type }}</td>
+            </tr>
+          {{/sources}}
+          </tbody>
+          </table>
+        </div>
       </div>
-      <div class="" id="detail-summary">
-          {{> partial/search-sources }}
-      </div>
+
 </div>

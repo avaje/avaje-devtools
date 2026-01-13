@@ -20,6 +20,14 @@ public class Partial {
   public record SearchTasks(Task first, List<Task> tasks) {
   }
 
+  @JStache(path = "partial/search-projects")
+  public record SearchProjects(List<MProject> projects) {
+  }
+
+  @JStache(path = "partial/search-sources")
+  public record SearchSources(List<MDataSource> sources) {
+  }
+
   @JStache(path = "partial/projects")
   public record Projects(List<MProject> projects) {
   }
@@ -37,6 +45,6 @@ public class Partial {
   }
 
   @JStache(path = "partial/toast")
-  public static record Toast(String message) {
+  public record Toast(String message) {
   }
 }

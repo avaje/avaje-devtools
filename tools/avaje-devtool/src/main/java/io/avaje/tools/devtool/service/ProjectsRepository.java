@@ -4,16 +4,12 @@ import io.avaje.inject.Component;
 import io.avaje.inject.PostConstruct;
 import io.avaje.jsonb.JsonType;
 import io.avaje.jsonb.Jsonb;
-import io.avaje.tools.devtool.data.Data;
-import io.avaje.tools.devtool.data.MDataSource;
-import io.avaje.tools.devtool.data.MProjects;
+import io.avaje.tools.devtool.data.*;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.lang.System.Logger.Level.ERROR;
 import static java.lang.System.Logger.Level.INFO;
@@ -27,8 +23,8 @@ public class ProjectsRepository {
   private final Jsonb jsonb;
   private final JsonType<MProjects> projectsJsonType;
   private MProjects mProjects = new MProjects();
-  private final Data data = new Data(new ArrayList<>());
   private File projectsFile;
+  private Data data = new Data(List.of(), List.of(), List.of());
 
   public ProjectsRepository(Jsonb jsonb) {
     this.jsonb = jsonb;
@@ -37,10 +33,6 @@ public class ProjectsRepository {
 
   public Data data() {
     return data;
-  }
-
-  public MProjects projects() {
-    return mProjects;
   }
 
   public void refreshData(Data data) {
@@ -60,38 +52,54 @@ public class ProjectsRepository {
 
     projectsFile = new File(file, "projects.json");
     if (projectsFile.exists()) {
-      try {
-        String asJson = Files.readString(projectsFile.toPath());
-        var xp = projectsJsonType.fromJson(asJson);
-        mProjects = xp;
-        // mProjects = projectsJsonType.fromJson(new FileReader(projectsFile));
+      try (var reader = new FileReader(projectsFile)) {
+        mProjects = projectsJsonType.fromJson(reader);
+
+        List<KBase> kbases = new ArrayList<>();
         for (MDataSource mDataSource : mProjects.dataSources()) {
-          loadDataSource(mDataSource);
+          kbases.addAll(loadDataSource(mDataSource));
         }
+        data = initialiseRepoData(mProjects, kbases);
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw new UncheckedIOException(e);
       }
     }
   }
 
-  boolean save() {
+  private Data initialiseRepoData(MProjects mProjects, List<KBase> kbases) {
+
+    var projects = mProjects.projects().stream()
+        .peek(MProject::initialiseSearchText)
+        .sorted()
+        .toList();
+
+    var sources = mProjects.dataSources().stream()
+      .sorted()
+      .toList();
+
+    var tasks = kbases.stream()
+      .flatMap(k -> k.tasks().stream())
+      .sorted()
+      .toList();
+
+    return new Data(projects, tasks, sources);
+  }
+
+  void saveProjectsFile() {
     if (projectsFile != null) {
       try {
         String jsonPretty = projectsJsonType.toJsonPretty(mProjects);
         Files.writeString(projectsFile.toPath(), jsonPretty);
         log.log(INFO, "Saved projects to " + projectsFile.getAbsolutePath());
-        return true;
+
       } catch (IOException e) {
         log.log(ERROR, "Error saving projects to " + projectsFile.getAbsolutePath(), e);
-        return false;
       }
     }
-    return false;
   }
 
-  private void loadDataSource(MDataSource mDataSource) {
-    Data load = DataLoader.load(jsonb, mDataSource.path());
-    data.kbases().addAll(load.kbases());
+  private List<KBase> loadDataSource(MDataSource mDataSource) {
+    return DataLoader.load(jsonb, mDataSource.path());
   }
 
   private String evalRootDir(String rootDir) {
@@ -99,16 +107,30 @@ public class ProjectsRepository {
     return userHome + rootDir.substring(1);
   }
 
-  public Optional<Data> addSource(String path) {
+  public long addSource(String path) {
     File file = new File(path);
-    if (file.exists()) {
-      Data load = DataLoader.load(jsonb, file);
-      var newSource = new MDataSource(path, "directory", path);
-      projects().dataSources().add(newSource);
-      data.kbases().addAll(load.kbases());
-      save();
-      return Optional.of(data);
+    if (!file.exists()) {
+      return 0;
     }
-    return Optional.empty();
+
+    List<KBase> load = DataLoader.load(jsonb, file);
+    var newSource = new MDataSource(path, "directory", path);
+
+    var newTasks = load.stream()
+      .flatMap(kb -> kb.tasks().stream())
+      .toList();
+
+    var sourceCopy = new ArrayList<>(data.sources());
+    sourceCopy.add(newSource);
+
+    var tasksCopy = new ArrayList<>(data.tasks());
+    tasksCopy.addAll(newTasks);
+
+    data = new Data(data().projects(), tasksCopy, sourceCopy);
+
+    mProjects.dataSources().add(newSource);
+
+    saveProjectsFile();
+    return newTasks.size();
   }
 }

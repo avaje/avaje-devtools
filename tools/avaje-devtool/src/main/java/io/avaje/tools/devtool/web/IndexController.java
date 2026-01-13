@@ -4,17 +4,13 @@ import io.avaje.htmx.api.Html;
 import io.avaje.htmx.api.HxRequest;
 import io.avaje.http.api.*;
 import io.avaje.jex.http.Context;
-import io.avaje.tools.devtool.data.Data;
-import io.avaje.tools.devtool.data.MDataSource;
-import io.avaje.tools.devtool.data.MProjects;
-import io.avaje.tools.devtool.data.Task;
+import io.avaje.tools.devtool.data.*;
 import io.avaje.tools.devtool.service.ClipB;
 import io.avaje.tools.devtool.service.DataService;
 import io.avaje.tools.devtool.web.view.Page;
 import io.avaje.tools.devtool.web.view.Partial;
 
 import java.util.List;
-import java.util.Optional;
 
 @Html
 @Controller
@@ -29,18 +25,17 @@ final class IndexController {
   @Get
   Page.Index home() {
     Data data = dataService.data();
-    return new Page.Index(data.kbaseCount(), data.taskCount());
+    return new Page.Index(data.tasks().size(), data.tasks().size());
   }
 
   @HxRequest
   @Get("initial")
   Object initial() {
-    MProjects projects = dataService.projects();
-    List<MDataSource> mDataSources = projects.dataSources();
-    if (mDataSources.isEmpty()) {
+    var sources = dataService.data().sources();
+    if (sources.isEmpty()) {
       return new Partial.InitialEmpty();
     }
-    return searchTasks("docs");
+    return tasks();
   }
 
 
@@ -68,8 +63,8 @@ final class IndexController {
   @Form
   @Post("search")
   Partial.SearchTasks searchTasks(String search) {
-    String clipboardText = ClipB.getClipboardText();
-    System.out.println("clipboardText = " + clipboardText);
+    //String clipboardText = ClipB.getClipboardText();
+    //System.out.println("clipboardText = " + clipboardText);
     List<Task> tasks = dataService.searchTasks(search, 10);
     var first = !tasks.isEmpty() ? tasks.getFirst() : null;
     return new Partial.SearchTasks(first, tasks);
@@ -78,41 +73,38 @@ final class IndexController {
   @HxRequest
   @Form
   @Post("searchProjects")
-  Partial.SearchTasks searchProjects(String search) {
-    //TODO searchProjects
-    List<Task> tasks = dataService.searchTasks(search, 10);
-    var first = !tasks.isEmpty() ? tasks.getFirst() : null;
-    return new Partial.SearchTasks(first, tasks);
+  Partial.SearchProjects searchProjects(String search) {
+    var projects = dataService.searchProjects(search, 10);
+    return new Partial.SearchProjects(projects);
   }
 
   @HxRequest
   @Form
   @Post("searchSources")
-  Partial.SearchTasks searchSources(String search) {
-    // TODO searchSources
-    List<Task> tasks = dataService.searchTasks(search, 10);
-    var first = !tasks.isEmpty() ? tasks.getFirst() : null;
-    return new Partial.SearchTasks(first, tasks);
+  Partial.SearchSources searchSources(String search) {
+    var sources = dataService.searchSources(search, 10);
+    return new Partial.SearchSources(sources);
   }
 
   @HxRequest
   @Get("projects")
   Partial.Projects projects() {
-    MProjects projects = dataService.projects();
-    return new Partial.Projects(projects.projects());
+    var projects = dataService.data().projects();
+    return new Partial.Projects(projects);
   }
 
   @HxRequest
   @Get("tasks")
   Partial.Tasks tasks() {
-    MProjects projects = dataService.projects();
-    return new Partial.Tasks(null, List.of());
+    var tasks = dataService.data().tasks();
+    var first = !tasks.isEmpty() ? tasks.getFirst() : null;
+    return new Partial.Tasks(first, tasks);
   }
 
   @HxRequest
   @Get("sources")
   Partial.Sources sources() {
-    var sources = dataService.projects().dataSources();
+    var sources = dataService.data().sources();
     return new Partial.Sources(sources);
   }
 
@@ -126,9 +118,8 @@ final class IndexController {
   @Form
   @Post("addSource")
   void addSource(String path, Context context) {
-    Optional<Data> data = dataService.addSource(path);
-    Long count = data.map(Data::kbaseCount).orElse(0L);
-    context.html("<p>Added source with " + count + " kbases</p>");
+    long count = dataService.addSource(path);
+    context.html("<p>Added source with " + count + " new tasks</p>");
   }
 
   @Produces(MediaType.TEXT_HTML)

@@ -1,4 +1,5 @@
 <div class="grid grid-cols-2 gap-4">
+
       <div class="pr-4">
         <input class="input m-2" type="search"
                name="search" placeholder="Search tasks..."
@@ -8,11 +9,26 @@
                hx-target="#search-results"
                ">
 
-        <div id="search-results" hx-trigger="keyup[ctrlKey&&key=='v']" hx-get="/cb"  hx-on::after-request="document.querySelector('#task-search-input').value = event.detail.xhr.responseText">
+        <div id="search-results">
+          <table class="table">
+          <tbody>
+          {{#tasks}}
+            <tr>
+              <td style="text-wrap-mode: wrap;">{{ displayName }}</td>
+              <td>{{ type }}</td>
+            </tr>
+          {{/tasks}}
+          </tbody>
+          </table>
         </div>
       </div>
-      <div class="" id="detail-summary">
-          {{> partial/search-tasks }}
+
+      <div id="detail-summary" class="card p-1">
+          <div class="card-body">
+              <h4 class="card-title">{{ first.displayName }}</h4>
+              <p>{{ first.description }}</p>
+              <div>{{{ first.preview }}}</div>
+          </div>
+        </div>
       </div>
-      <p><small>Admin UI</small></p>
 </div>
