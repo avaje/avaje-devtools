@@ -10,12 +10,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MavenTreeModelTest {
 
   @Test
+  void groupIdFromParent() {
+    File example = new File("src/test/resources/maven/nothing-pom3.xml");
+    MavenTree pom = TreeReader.read(example);
+
+    assertThat(pom.groupId()).isEqualTo("io.ebean.parent");
+    assertThat(pom.artifactId()).isEqualTo("ebean-init");
+    assertThat(pom.name()).isEqualTo("my-name");
+    assertThat(pom.description()).isEqualTo("my-description");
+  }
+
+  @Test
   void pomContainsNothing() {
     File example = new File("src/test/resources/maven/nothing-pom.xml");
     MavenTree pom = TreeReader.read(example);
 
     var artifactId = pom.find("artifactId");
     assertThat(artifactId).hasSize(1);
+
+    assertThat(pom.groupId()).isEqualTo("io.ebean.tools");
+    assertThat(pom.artifactId()).isEqualTo("ebean-init");
   }
 
   @Test

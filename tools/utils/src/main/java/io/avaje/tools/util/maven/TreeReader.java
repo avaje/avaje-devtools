@@ -49,6 +49,10 @@ final class TreeReader {
         currentNode.addChild(SingleLineTagNode.of(tagName, line));
         return;
       }
+      if (isSingleLineEmptyXmlTag(line)) {
+        currentNode.addChild(new LineNode(line));
+        return;
+      }
       TreeNode tagNode = new TagNode(tagName);
       currentNode.addChild(tagNode);
       tagNode.addChild(new LineNode(line));
@@ -66,6 +70,12 @@ final class TreeReader {
     }
 
     currentNode.addChild(new LineNode(line));
+  }
+
+  private static final Pattern EMPTY_XML_TAG = Pattern.compile("<\\s*([a-zA-Z0-9:_-]+)\\s*/>");
+
+  static boolean isSingleLineEmptyXmlTag(String line) {
+    return EMPTY_XML_TAG.matcher(line).find();
   }
 
 

@@ -13,8 +13,9 @@
     <groupId>io.avaje.tools</groupId>
     <artifactId>utils</artifactId>
     <name>utils</name>
+    <version>0.1</version>
 
-    <properties>
+  <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

@@ -25,6 +25,31 @@ public final class MavenTree {
     Files.write(path, asLines(), StandardCharsets.UTF_8);
   }
 
+  public String groupId() {
+    String groupId = singleAttribute("groupId");
+    return groupId != null ? groupId : singleAttribute("parent.groupId");
+  }
+
+  public String artifactId() {
+    return singleAttribute("artifactId");
+  }
+
+  public String name() {
+    return singleAttribute("name");
+  }
+
+  public String description() {
+    return singleAttribute("description");
+  }
+
+  private String singleAttribute(String name) {
+    List<TreeNode> artifactIds = find(name);
+    if (!artifactIds.isEmpty()) {
+      return artifactIds.getFirst().innerContent();
+    }
+    return null;
+  }
+
   public boolean containsDependency(String groupId, String artifactId) {
     return dependencies()
       .anyMatch(dep -> dep.groupId().equals(groupId) && dep.artifactId().equals(artifactId));
