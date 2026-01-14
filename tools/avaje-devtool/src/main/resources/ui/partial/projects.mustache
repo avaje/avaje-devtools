@@ -4,7 +4,13 @@
     <a class="" hx-get="/sources" hx-target="#content">sources</a>
 </nav>
 <div class="grid grid-cols-1 gap-4">
-      <div class="pr-4">
+      <div class="text-right px-4 pt-4">
+        <nav>
+          <button class="btn btn-secondary" hx-get="/viewNewProjectForm" hx-target="#projects-main" hx-swap="innerHTML">Add Project</button>
+          <button class="btn btn-secondary" hx-get="/viewProjects" hx-target="#projects-main" hx-swap="innerHTML">Search</button>
+        </nav>
+      </div>
+      <div id="projects-main" class="pr-4">
         <input class="input m-2" type="search"
                name="search" placeholder="Search projects..."
                hx-post="/searchProjects"
@@ -12,8 +18,5 @@
                hx-target="#search-results">
 
         <div id="search-results"></div>
-      </div>
-      <div class="" id="detail-summary">
-      {{> partial/search-projects }}
       </div>
 </div>

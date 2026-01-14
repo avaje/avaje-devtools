@@ -1,0 +1,16 @@
+<form hx-post="/scanPathForProjects"
+      hx-target="#scan-project-results"
+      hx-swap="innerHTML"
+      class="p-4">
+  <input class="input m-2" type="search" name="path" placeholder="Directory containing projects...">
+  <p class="py-4 px-2 text-gray-600">
+    Enter a directory path to scan for projects.
+    All subdirectories will be scanned for recognized project types (e.g., Maven, Gradle).
+  </p>
+  <div class="py-4">
+    <button class="btn btn-primary">Scan directory for projects</button>
+    <button class="btn btn-primary">Use user home directory</button>
+  </div>
+</form>
+
+<div id="scan-project-results"></div>

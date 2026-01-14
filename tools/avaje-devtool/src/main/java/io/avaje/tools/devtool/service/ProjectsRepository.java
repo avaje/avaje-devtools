@@ -133,4 +133,36 @@ public class ProjectsRepository {
     saveProjectsFile();
     return newTasks.size();
   }
+
+  public void addScannedProjects(ProjectFileSearch lastProjectScan) {
+
+    List<MProject> existing = data.projects();
+
+    List<MProject> list = lastProjectScan.all()
+      .map(ProjectsRepository::mapToMProject)
+      .sorted()
+      .toList();
+
+    var combined = new ArrayList<>(list);
+    combined.addAll(existing);
+    combined.sort(null);
+
+    data = new Data(combined, data.tasks(), data.sources());
+    List<MProject> projects = mProjects.projects();
+    projects.addAll(list);
+
+    saveProjectsFile();
+  }
+
+  private static MProject mapToMProject(ModelProjectMaven loadedMavenPom) {
+    var p = new MProject();
+    p.setPath(loadedMavenPom.projectFile().getAbsolutePath());
+    p.setName(loadedMavenPom.name());
+    p.setType(MProject.Type.MAVEN);
+    p.setGroupId(loadedMavenPom.groupId());
+    p.setArtifactId(loadedMavenPom.artifactId());
+    p.setDescription(loadedMavenPom.description());
+    p.initialiseSearchText();
+    return p;
+  }
 }

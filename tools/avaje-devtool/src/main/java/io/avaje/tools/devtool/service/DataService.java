@@ -4,7 +4,6 @@ import io.avaje.inject.Component;
 import io.avaje.tools.devtool.data.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component
@@ -81,5 +80,22 @@ public final class DataService {
 
   public long addSource(String path) {
     return repository.addSource(path);
+  }
+
+  ProjectFileSearch lastProjectScan;
+
+  public ProjectFileSearch scanPathForProjects(String path) {
+    lastProjectScan = ProjectFileSearch.matchProjectFiles(path);
+    return lastProjectScan;
+  }
+
+  public void addScannedProjects() {
+
+    if (lastProjectScan != null) {
+      repository.addScannedProjects(lastProjectScan);
+    } else {
+      log.log(System.Logger.Level.WARNING, "No scanned projects to add");
+    }
+
   }
 }

@@ -1,0 +1,7 @@
+<input class="input m-2" type="search"
+       name="search" placeholder="Search projects..."
+       hx-post="/searchProjects"
+       hx-trigger="input changed delay:200ms, keyup[key=='Enter'], load"
+       hx-target="#search-results">
+
+<div id="search-results"></div>

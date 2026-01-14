@@ -8,7 +8,7 @@ import java.util.Comparator;
 public class MProject implements Comparable<MProject> {
 
   private static final Comparator<MProject> M_PROJECT_COMPARATOR =
-    Comparator.comparing(MProject::name)
+    Comparator.comparing(MProject::groupId)
       .thenComparing(MProject::artifactId);
 
   private String name;

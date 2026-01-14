@@ -5,8 +5,9 @@ import io.avaje.htmx.api.HxRequest;
 import io.avaje.http.api.*;
 import io.avaje.jex.http.Context;
 import io.avaje.tools.devtool.data.*;
-import io.avaje.tools.devtool.service.ClipB;
 import io.avaje.tools.devtool.service.DataService;
+import io.avaje.tools.devtool.service.ModelProjectMaven;
+import io.avaje.tools.devtool.service.ProjectFileSearch;
 import io.avaje.tools.devtool.web.view.Page;
 import io.avaje.tools.devtool.web.view.Partial;
 
@@ -38,33 +39,10 @@ final class IndexController {
     return tasks();
   }
 
-
-  @HxRequest
-  @Get("cb")
-  void getClipboard(Context context) {
-    String clipboardText = ClipB.getClipboardText();
-    System.out.println("cb: " + clipboardText);
-//    String c = """
-//      <input id="task-search-input" type="text" value="{}" hx-swap-oob="innerHTML">
-//      """;
-//    var r = c.replace("{}", clipboardText);
-    context.text(clipboardText);
-  }
-
-  @HxRequest
-  @Form
-  @Post("copyToClipboard")
-  Partial.Toast copyToClipboard(String clip) {
-    ClipB.setClipboardText(clip);
-    return new Partial.Toast("Copied to clipboard");
-  }
-
   @HxRequest
   @Form
   @Post("search")
   Partial.SearchTasks searchTasks(String search) {
-    //String clipboardText = ClipB.getClipboardText();
-    //System.out.println("clipboardText = " + clipboardText);
     List<Task> tasks = dataService.searchTasks(search, 10);
     var first = !tasks.isEmpty() ? tasks.getFirst() : null;
     return new Partial.SearchTasks(first, tasks);
@@ -137,4 +115,41 @@ final class IndexController {
     System.out.println("body = " + body);
     ctx.html("upload2");
   }
+
+  @HxRequest
+  @Get("viewNewProjectForm")
+  Partial.ViewNewProjectForm viewNewProjectForm() {
+    return new Partial.ViewNewProjectForm();
+  }
+
+  @HxRequest
+  @Get("viewProjects")
+  Partial.ViewProjects viewProjects() {
+    return new Partial.ViewProjects();
+  }
+
+  @HxRequest
+  @Form
+  @Post("scanPathForProjects")
+  Partial.ScanProjectsResult scanPathForProjects(String path) {
+    ProjectFileSearch scan = dataService.scanPathForProjects(path);
+    List<ModelProjectMaven> projects = scan.topLevel()
+      .stream()
+      .sorted()
+      .toList();
+
+    int directoriesSearched = scan.totalDirectoriesSearched();
+    long allCount = scan.all().count();
+
+    return new Partial.ScanProjectsResult(projects, allCount, directoriesSearched);
+  }
+
+  @HxRequest
+  @Form
+  @Post("addScannedProjects")
+  void addScannedProjects(Context context) {
+    dataService.addScannedProjects();
+    context.html("<p>Scanned projects added</p>");
+  }
+
 }
