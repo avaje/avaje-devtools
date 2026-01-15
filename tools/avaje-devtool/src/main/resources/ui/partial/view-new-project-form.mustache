@@ -2,7 +2,9 @@
       hx-target="#scan-project-results"
       hx-swap="innerHTML"
       class="p-4">
-  <input class="input m-2" type="search" name="path" placeholder="Directory containing projects...">
+  <input class="input m-2" type="search"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        name="path" placeholder="Directory containing projects...">
   <p class="py-4 px-2 text-gray-600">
     Enter a directory path to scan for projects.
     All subdirectories will be scanned for recognized project types (e.g., Maven, Gradle).

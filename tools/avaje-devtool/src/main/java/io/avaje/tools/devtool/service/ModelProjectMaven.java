@@ -3,9 +3,7 @@ package io.avaje.tools.devtool.service;
 import io.avaje.tools.util.maven.MavenTree;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ModelProjectMaven implements Comparable<ModelProjectMaven> {
@@ -15,6 +13,7 @@ public class ModelProjectMaven implements Comparable<ModelProjectMaven> {
       .thenComparing(ModelProjectMaven::artifactId);
 
   private final MavenTree pom;
+  private final String relativePath;
   private final File projectFile;
   private final String groupId;
   private final String artifactId;
@@ -24,8 +23,9 @@ public class ModelProjectMaven implements Comparable<ModelProjectMaven> {
   private final List<ModelProjectMaven> modules = new ArrayList<>();
   private final String searchText;
 
-  public ModelProjectMaven(MavenTree pom, File projectFile, ModelProjectMaven parent) {
+  public ModelProjectMaven(MavenTree pom, String relativePath, File projectFile, ModelProjectMaven parent) {
     this.pom = pom;
+    this.relativePath = relativePath;
     this.projectFile = projectFile;
     this.groupId = pom.groupId();
     this.artifactId = pom.artifactId();
@@ -33,15 +33,30 @@ public class ModelProjectMaven implements Comparable<ModelProjectMaven> {
     this.description = pom.description();
     this.parent = parent;
 
-    StringBuilder search = new StringBuilder();
-    search.append(groupId).append(':').append(artifactId);
-    if (name != null && !name.equals(artifactId)) {
-      search.append(' ').append(name);
+    var searchTokens = new HashSet<String>();
+    searchTokens.add(groupId.toLowerCase());
+    searchTokens.add(artifactId.toLowerCase());
+
+    var search = new StringBuilder();
+    search.append(groupId.toLowerCase()).append(':').append(artifactId.toLowerCase());
+    if (name != null) {
+      for (String s : name.toLowerCase().split(" ")) {
+        if (!s.isBlank() && searchTokens.add(s)){
+          search.append(' ').append(s);
+        }
+      }
+    }
+    for (String s : relativePath.toLowerCase().split("/")) {
+      if (!s.isBlank() && !s.equals("pom.xml")) {
+        if (searchTokens.add(s)){
+          search.append(' ').append(s);
+        }
+      }
     }
     if (parent == null) {
       search.append(" (*)");
     }
-    this.searchText = search.toString().toLowerCase();
+    this.searchText = search.toString();
   }
 
 
@@ -88,6 +103,10 @@ public class ModelProjectMaven implements Comparable<ModelProjectMaven> {
 
   public List<ModelProjectMaven> modules() {
     return modules;
+  }
+
+  public String relativePath() {
+    return relativePath;
   }
 
   public Stream<ModelProjectMaven> flattened() {

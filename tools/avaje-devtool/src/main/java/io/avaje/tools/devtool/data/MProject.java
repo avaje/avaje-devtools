@@ -17,9 +17,8 @@ public class MProject implements Comparable<MProject> {
   private String artifactId;
   private String description;
   private String path;
+  private String relativePath;
   private Type type;
-
-  @Json.Ignore
   private String searchText;
 
   @Override
@@ -34,27 +33,6 @@ public class MProject implements Comparable<MProject> {
       }
     }
     return true;
-  }
-
-  public void initialiseSearchText() {
-    searchText = initSearchText();
-  }
-
-  private String initSearchText() {
-    StringBuilder sb = new StringBuilder();
-    if (name != null) {
-      sb.append(name).append(' ');
-    }
-    if (groupId != null) {
-      sb.append(groupId).append(' ');
-    }
-    if (artifactId != null) {
-      sb.append(artifactId).append(' ');
-    }
-    if (description != null) {
-      sb.append(description).append(' ');
-    }
-    return sb.toString().toLowerCase();
   }
 
   public enum Type {
@@ -110,6 +88,23 @@ public class MProject implements Comparable<MProject> {
   public MProject setPath(String path) {
     this.path = path;
     return this;
+  }
+
+  public String relativePath() {
+    return relativePath;
+  }
+
+  public MProject setRelativePath(String relativePath) {
+    this.relativePath = relativePath;
+    return this;
+  }
+
+  public String searchText() {
+    return searchText;
+  }
+
+  public void setSearchText(String searchText) {
+    this.searchText = searchText;
   }
 
   public Type type() {

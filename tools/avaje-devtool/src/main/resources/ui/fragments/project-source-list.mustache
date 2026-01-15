@@ -9,6 +9,7 @@
     </div>
     <div id="projects-main">
       <input class="input m-2" type="search"
+             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
              name="search" placeholder="Search project sources..."
              hx-post="/searchProjectSources"
              hx-trigger="input changed delay:200ms, keyup[key=='Enter'], load"

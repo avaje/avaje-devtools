@@ -68,7 +68,6 @@ public class ApplicationRepository {
   private void initialiseApplicationState(ApplicationModel loadedModel) {
 
     var projects = loadedModel.projects().stream()
-        .peek(MProject::initialiseSearchText)
         .distinct()
         .sorted()
         .toList();
@@ -155,13 +154,14 @@ public class ApplicationRepository {
 
   private static MProject mapToMProject(ModelProjectMaven loadedMavenPom) {
     var p = new MProject();
+    p.setRelativePath(loadedMavenPom.relativePath());
     p.setPath(loadedMavenPom.projectFile().getAbsolutePath());
-    p.setName(loadedMavenPom.name());
     p.setType(MProject.Type.MAVEN);
     p.setGroupId(loadedMavenPom.groupId());
     p.setArtifactId(loadedMavenPom.artifactId());
+    p.setName(loadedMavenPom.name());
     p.setDescription(loadedMavenPom.description());
-    p.initialiseSearchText();
+    p.setSearchText(loadedMavenPom.searchText());
     return p;
   }
 }

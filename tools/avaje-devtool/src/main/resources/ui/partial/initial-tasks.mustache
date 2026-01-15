@@ -1,6 +1,7 @@
 <div class="grid grid-cols-2 gap-4">
       <div class="pr-4">
         <input class="input m-2" type="search"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                name="search" placeholder="Search tasks..."
                hx-post="/search"
                hx-trigger="input changed delay:200ms, keyup[key=='Enter'], load"

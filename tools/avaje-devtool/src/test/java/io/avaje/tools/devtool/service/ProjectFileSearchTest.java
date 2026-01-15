@@ -21,7 +21,6 @@ class ProjectFileSearchTest {
 
     assertThat(search.totalDirectoriesSearched()).isGreaterThan(4);
     assertThat(topLevel).isNotEmpty();
-//    System.out.println("All: " + list1);
 
     List<ModelProjectMaven> list = topLevel.stream()
       .filter(p -> p.searchText().contains(":consol"))

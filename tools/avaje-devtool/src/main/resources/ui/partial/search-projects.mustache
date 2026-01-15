@@ -3,7 +3,9 @@
 <tbody>
 {{#projects}}
   <tr>
-    <td style="text-wrap-mode: wrap;">{{ groupId }} {{ artifactId }}</td>
+    <td>{{ groupId }} {{ artifactId }}</td>
+    <td>{{ relativePath }}</td>
+    <td style="text-wrap-mode: wrap;">{{ searchText }}</td>
     <td>{{ type }}</td>
   </tr>
 {{/projects}}

@@ -4,9 +4,7 @@ import io.avaje.tools.util.maven.MavenTree;
 import io.avaje.tools.util.maven.TreeNode;
 
 import java.io.File;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.lang.System.Logger.Level.DEBUG;
@@ -14,7 +12,7 @@ import static java.lang.System.Logger.Level.DEBUG;
 /**
  * Search for (maven) project files starting from the given path.
  */
-public class ProjectFileSearch {
+public final class ProjectFileSearch {
 
   private static final System.Logger log = System.getLogger("app");
 
@@ -22,28 +20,33 @@ public class ProjectFileSearch {
   private final String path;
   private final List<ModelProjectMaven> topMavenProjects = new ArrayList<>();
   private final ArrayDeque<ModelProjectMaven> mavenProjectStack = new ArrayDeque<>();
+  private final String rootPath;
 
   private int depth = 0;
   private int totalDirCount = 0;
 
-  public ProjectFileSearch(String path) {
-    this.path = path;
+  private ProjectFileSearch(String startPath) {
+    this.path = normalisePath(startPath);
+    this.rootPath = new File(path).getAbsolutePath();
+  }
+
+  private static String normalisePath(String path) {
+    if (!path.startsWith("~/")) {
+      return path;
+    }
+    return System.getProperty("user.home") + path.substring(1);
   }
 
   public static ProjectFileSearch matchProjectFiles(String path) {
-    var search = new ProjectFileSearch(path);
-    search.searchPath(path);
-    return search;
+    return new ProjectFileSearch(path).searchPath();
   }
 
-  private void searchPath(String directory) {
-    if (directory.startsWith("~/")) {
-      directory = System.getProperty("user.home") + directory.substring(1);
-    }
-    File dir = new File(directory);
+  private ProjectFileSearch searchPath() {
+    File dir = new File(path);
     if (dir.exists() && dir.isDirectory()) {
       searchDirectory(dir);
     }
+    return this;
   }
 
   private void searchDirectory(File dir) {
@@ -76,7 +79,8 @@ public class ProjectFileSearch {
     }
 
     MavenTree mavenTree = MavenTree.read(projectFile);
-    ModelProjectMaven mavenProject = new ModelProjectMaven(mavenTree, projectFile, parent);
+    String relativePath = relativePath(projectFile);
+    ModelProjectMaven mavenProject = new ModelProjectMaven(mavenTree, relativePath, projectFile, parent);
     if (topLevelPom) {
       topMavenProjects.add(mavenProject);
     } else {
@@ -90,6 +94,11 @@ public class ProjectFileSearch {
       searchSubDirectories(files);
       mavenProjectStack.pop();
     }
+  }
+
+  private String relativePath(File projectFile) {
+    String absolutePath = projectFile.getAbsolutePath();
+    return absolutePath.substring(rootPath.length() + 1);
   }
 
   private void searchSubDirectories(File[] files) {
