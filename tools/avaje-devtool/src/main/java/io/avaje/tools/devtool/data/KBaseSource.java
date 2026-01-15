@@ -2,6 +2,7 @@ package io.avaje.tools.devtool.data;
 
 import io.avaje.jsonb.Json;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -12,7 +13,9 @@ import java.util.Objects;
  * @param path The directory path that containers the knowledge bases
  */
 @Json
-public record KBaseSource(String name, String type, String path) {
+public record KBaseSource(String name, String type, String path) implements Comparable<KBaseSource> {
+
+  private static final Comparator<KBaseSource> ORDERING = Comparator.comparing(KBaseSource::name).thenComparing(KBaseSource::path);
 
   public boolean matchAll(String[] tokens) {
     for (String token : tokens) {
@@ -31,5 +34,10 @@ public record KBaseSource(String name, String type, String path) {
   @Override
   public int hashCode() {
     return Objects.hash(path);
+  }
+
+  @Override
+  public int compareTo(KBaseSource other) {
+    return ORDERING.compare(this, other);
   }
 }

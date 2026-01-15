@@ -5,25 +5,8 @@
 </nav>
 
 <div class="grid grid-cols-1 gap-4">
-      <div class="pr-4">
-        <input class="input m-2" type="search"
-               name="search" placeholder="Search sources..."
-               hx-post="/searchSources"
-               hx-trigger="input changed delay:200ms, keyup[key=='Enter'], load"
-               hx-target="#search-results">
 
-        <div id="search-results">
-          <table class="table">
-          <tbody>
-          {{#sources}}
-            <tr>
-              <td style="text-wrap-mode: wrap;">{{ name }}</td>
-              <td>{{ type }}</td>
-            </tr>
-          {{/sources}}
-          </tbody>
-          </table>
-        </div>
-      </div>
+  {{> fragments/task-source-list }}
+  {{> fragments/project-source-list }}
 
 </div>

@@ -2,10 +2,12 @@ package io.avaje.tools.devtool.web.view;
 
 import io.avaje.tools.devtool.data.KBaseSource;
 import io.avaje.tools.devtool.data.MProject;
+import io.avaje.tools.devtool.data.ProjectsSource;
 import io.avaje.tools.devtool.state.Task;
 import io.avaje.tools.devtool.service.ModelProjectMaven;
 import io.jstach.jstache.JStache;
 
+import java.util.Collection;
 import java.util.List;
 
 public class Partial {
@@ -25,20 +27,24 @@ public class Partial {
   public record SearchProjects(List<MProject> projects) {
   }
 
-  @JStache(path = "partial/search-sources")
-  public record SearchSources(List<KBaseSource> sources) {
+  @JStache(path = "partial/search-task-sources")
+  public record SearchTaskSources(List<KBaseSource> taskSources) {
+  }
+
+  @JStache(path = "partial/search-project-sources")
+  public record SearchProjectSources(List<ProjectsSource> projectSources) {
   }
 
   @JStache(path = "partial/projects")
-  public record Projects(List<MProject> projects) {
+  public record Projects(Collection<MProject> projects) {
   }
 
   @JStache(path = "partial/tasks")
-  public record Tasks(Task first, List<Task> tasks) {
+  public record Tasks(Task first, Collection<Task> tasks) {
   }
 
   @JStache(path = "partial/sources")
-  public record Sources(List<KBaseSource> sources) {
+  public record Sources(Collection<KBaseSource> taskSources, Collection<ProjectsSource> projectSources) {
   }
 
   @JStache(path = "partial/sidebar")

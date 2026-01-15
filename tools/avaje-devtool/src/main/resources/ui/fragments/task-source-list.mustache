@@ -1,0 +1,32 @@
+<div class="p-2 card">
+  <div class="grid grid-cols-2">
+    <p>Task Sources</p>
+    <div class="text-right px-4">
+      <nav>
+        <button class="btn btn-secondary" hx-get="/viewNewTasksForm" hx-target="#tasks-main">Add Tasks</button>
+      </nav>
+    </div>
+  </div>
+
+  <div id="tasks-main">
+    <input class="input m-2" type="search"
+           name="search" placeholder="Search task sources..."
+           hx-post="/searchTaskSources"
+           hx-trigger="input changed delay:200ms, keyup[key=='Enter'], load"
+           hx-target="#task-source-search-results">
+
+    <div id="task-source-search-results">
+      <table class="table">
+      <tbody>
+      {{#taskSources}}
+        <tr>
+          <td style="text-wrap-mode: wrap;">{{ name }}</td>
+          <td>{{ type }}</td>
+        </tr>
+      {{/taskSources}}
+      </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

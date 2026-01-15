@@ -5,40 +5,40 @@ import io.avaje.tools.devtool.data.KBaseSource;
 import io.avaje.tools.devtool.data.MProject;
 import io.avaje.tools.devtool.data.ProjectsSource;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.synchronizedList;
+import static java.util.Collections.synchronizedSet;
 
 public final class ApplicationState {
 
-  private final List<MProject> projects = synchronizedList(new ArrayList<>());
+  private final Set<MProject> projects = synchronizedSet(new TreeSet<>());
   private final List<Task> tasks = synchronizedList(new ArrayList<>());
-  private final List<KBaseSource> dataSources = synchronizedList(new ArrayList<>());
-  private final List<ProjectsSource> projectSources = synchronizedList(new ArrayList<>());
+  private final Set<KBaseSource> dataSources = synchronizedSet(new TreeSet<>());
+  private final Set<ProjectsSource> projectSources = synchronizedSet(new TreeSet<>());
 
-  public List<MProject> projects() {
+  public Collection<MProject> projects() {
     return projects;
   }
 
-  public List<Task> tasks() {
+  public SequencedCollection<Task> tasks() {
     return tasks;
   }
 
-  public List<KBaseSource> dataSources() {
+  public Collection<KBaseSource> dataSources() {
     return dataSources;
   }
 
-  public List<ProjectsSource> projectSources() {
+  public Collection<ProjectsSource> projectSources() {
     return projectSources;
   }
 
   public synchronized ApplicationModel toApplicationModel() {
     return new ApplicationModel()
-      .setProjects(projects)
-      .setDataSources(dataSources)
-      .setProjectSources(projectSources);
+      .setProjects(new ArrayList<>(projects))
+      .setDataSources(new ArrayList<>(dataSources))
+      .setProjectSources(new ArrayList<>(projectSources));
   }
 
   /**
@@ -67,19 +67,20 @@ public final class ApplicationState {
    * Add the project source if not already present based on path.
    */
   public synchronized void addProjectSource(ProjectsSource newProjectSource) {
-    projects.stream()
-      .filter(s -> s.path().equals(newProjectSource.path()))
-      .findAny()
-      .ifPresentOrElse(_ -> {}, () -> projectSources.add(newProjectSource));
+    projectSources.add(newProjectSource);
+//    projects.stream()
+//      .filter(s -> s.path().equals(newProjectSource.path()))
+//      .findAny()
+//      .ifPresentOrElse(
+//        _ -> {},
+//        () ->
+//          projectSources.add(newProjectSource));
   }
 
   public synchronized void addProjects(List<MProject> list) {
-    projects.stream()
-      .collect(Collectors.toMap(MProject::key, p -> p))
-      .putAll(list.stream().collect(Collectors.toMap(MProject::key, p -> p)));
-
-    // resort after adding
-    projects.sort(null);
+//    Set<MProject> copy = new HashSet<>(projects);
+//    copy.addAll(list);
+    projects.addAll(list);
   }
 
   public synchronized void init(List<MProject> loadedProjects,

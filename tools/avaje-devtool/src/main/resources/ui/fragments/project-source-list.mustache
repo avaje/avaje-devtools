@@ -1,0 +1,30 @@
+  <div class="p-2 card">
+    <div class="grid grid-cols-2">
+      <p>Project Sources</p>
+      <div class="text-right px-4">
+        <nav>
+          <button class="btn btn-secondary" hx-get="/viewNewProjectForm" hx-target="#projects-main">Add Project</button>
+        </nav>
+      </div>
+    </div>
+    <div id="projects-main">
+      <input class="input m-2" type="search"
+             name="search" placeholder="Search project sources..."
+             hx-post="/searchProjectSources"
+             hx-trigger="input changed delay:200ms, keyup[key=='Enter'], load"
+             hx-target="#project-source-search-results">
+
+      <div id="project-source-search-results">
+        <table class="table">
+        <tbody>
+        {{#projectSources}}
+          <tr>
+            <td style="text-wrap-mode: wrap;">{{ name }}</td>
+            <td>{{ type }}</td>
+          </tr>
+        {{/projectSources}}
+        </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

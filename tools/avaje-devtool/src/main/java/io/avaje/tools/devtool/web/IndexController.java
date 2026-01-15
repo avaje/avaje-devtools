@@ -4,6 +4,7 @@ import io.avaje.htmx.api.Html;
 import io.avaje.htmx.api.HxRequest;
 import io.avaje.http.api.*;
 import io.avaje.jex.http.Context;
+import io.avaje.tools.devtool.data.ProjectsSource;
 import io.avaje.tools.devtool.service.DataService;
 import io.avaje.tools.devtool.service.ModelProjectMaven;
 import io.avaje.tools.devtool.service.ProjectFileSearch;
@@ -59,10 +60,18 @@ final class IndexController {
 
   @HxRequest
   @Form
-  @Post("searchSources")
-  Partial.SearchSources searchSources(String search) {
-    var sources = dataService.searchSources(search, 10);
-    return new Partial.SearchSources(sources);
+  @Post("searchTaskSources")
+  Partial.SearchTaskSources searchTaskSources(String search) {
+    var sources = dataService.searchTaskSources(search, 10);
+    return new Partial.SearchTaskSources(sources);
+  }
+
+  @HxRequest
+  @Form
+  @Post("searchProjectSources")
+  Partial.SearchProjectSources searchProjectSources(String search) {
+    var sources = dataService.searchProjectSources(search, 10);
+    return new Partial.SearchProjectSources(sources);
   }
 
   @HxRequest
@@ -83,8 +92,9 @@ final class IndexController {
   @HxRequest
   @Get("sources")
   Partial.Sources sources() {
-    var sources = dataService.data().dataSources();
-    return new Partial.Sources(sources);
+    var taskSources = dataService.data().dataSources();
+    var projectsSources = dataService.data().projectSources();
+    return new Partial.Sources(taskSources, projectsSources);
   }
 
   @HxRequest

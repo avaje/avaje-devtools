@@ -28,10 +28,16 @@ public final class DataService {
     repository.refreshData(data);
   }
 
-  public List<KBaseSource> searchSources(String search, int limit) {
+  public List<KBaseSource> searchTaskSources(String search, int limit) {
     if (search == null) return List.of();
     String[] tokens = asTokens(search);
-    return searchSources(tokens, limit);
+    return searchTaskSources(tokens, limit);
+  }
+
+  public List<ProjectsSource> searchProjectSources(String search, int limit) {
+    if (search == null) return List.of();
+    String[] tokens = asTokens(search);
+    return searchProjectSources(tokens, limit);
   }
 
   public List<MProject> searchProjects(String search, int limit) {
@@ -71,11 +77,21 @@ public final class DataService {
       .toList();
   }
 
-  public List<KBaseSource> searchSources(String[] tokens, int limit) {
+  public List<KBaseSource> searchTaskSources(String[] tokens, int limit) {
     if (tokens == null || tokens.length == 0) {
       return List.of();
     }
     return data().dataSources().stream()
+      .filter(source -> source.matchAll(tokens))
+      .limit(limit)
+      .toList();
+  }
+
+  public List<ProjectsSource> searchProjectSources(String[] tokens, int limit) {
+    if (tokens == null || tokens.length == 0) {
+      return List.of();
+    }
+    return data().projectSources().stream()
       .filter(source -> source.matchAll(tokens))
       .limit(limit)
       .toList();
@@ -93,7 +109,6 @@ public final class DataService {
   }
 
   public void addScannedProjects() {
-
     if (lastProjectScan != null) {
       repository.addScannedProjects(lastProjectScan);
     } else {
