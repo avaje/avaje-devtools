@@ -1,8 +1,8 @@
 package io.avaje.tools.devtool.web.view;
 
-import io.avaje.tools.devtool.data.MDataSource;
+import io.avaje.tools.devtool.data.KBaseSource;
 import io.avaje.tools.devtool.data.MProject;
-import io.avaje.tools.devtool.data.Task;
+import io.avaje.tools.devtool.state.Task;
 import io.avaje.tools.devtool.service.ModelProjectMaven;
 import io.jstach.jstache.JStache;
 
@@ -26,7 +26,7 @@ public class Partial {
   }
 
   @JStache(path = "partial/search-sources")
-  public record SearchSources(List<MDataSource> sources) {
+  public record SearchSources(List<KBaseSource> sources) {
   }
 
   @JStache(path = "partial/projects")
@@ -38,7 +38,7 @@ public class Partial {
   }
 
   @JStache(path = "partial/sources")
-  public record Sources(List<MDataSource> sources) {
+  public record Sources(List<KBaseSource> sources) {
   }
 
   @JStache(path = "partial/sidebar")

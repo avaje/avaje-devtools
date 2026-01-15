@@ -1,8 +1,10 @@
-package io.avaje.tools.devtool.data;
+package io.avaje.tools.devtool.state;
+
+import io.avaje.tools.devtool.data.KBaseMeta;
 
 import java.util.List;
 
-public record KBase(
+public record TaskGroup(
         KBaseMeta meta,
         List<Task> tasks
 ) {

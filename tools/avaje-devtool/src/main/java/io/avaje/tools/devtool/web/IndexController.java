@@ -4,10 +4,11 @@ import io.avaje.htmx.api.Html;
 import io.avaje.htmx.api.HxRequest;
 import io.avaje.http.api.*;
 import io.avaje.jex.http.Context;
-import io.avaje.tools.devtool.data.*;
 import io.avaje.tools.devtool.service.DataService;
 import io.avaje.tools.devtool.service.ModelProjectMaven;
 import io.avaje.tools.devtool.service.ProjectFileSearch;
+import io.avaje.tools.devtool.state.ApplicationState;
+import io.avaje.tools.devtool.state.Task;
 import io.avaje.tools.devtool.web.view.Page;
 import io.avaje.tools.devtool.web.view.Partial;
 
@@ -25,14 +26,14 @@ final class IndexController {
 
   @Get
   Page.Index home() {
-    Data data = dataService.data();
+    ApplicationState data = dataService.data();
     return new Page.Index(data.tasks().size(), data.tasks().size());
   }
 
   @HxRequest
   @Get("initial")
   Object initial() {
-    var sources = dataService.data().sources();
+    var sources = dataService.data().dataSources();
     if (sources.isEmpty()) {
       return new Partial.InitialEmpty();
     }
@@ -82,7 +83,7 @@ final class IndexController {
   @HxRequest
   @Get("sources")
   Partial.Sources sources() {
-    var sources = dataService.data().sources();
+    var sources = dataService.data().dataSources();
     return new Partial.Sources(sources);
   }
 

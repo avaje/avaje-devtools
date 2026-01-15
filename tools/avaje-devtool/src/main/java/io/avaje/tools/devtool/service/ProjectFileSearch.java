@@ -9,18 +9,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.lang.System.Logger.Level.DEBUG;
+
+/**
+ * Search for (maven) project files starting from the given path.
+ */
 public class ProjectFileSearch {
 
-  private static final int maxDepth = 10;
-  private int depth = 0;
-  private List<File> matchingFiles = new ArrayList<>();
-  private int totalDirCount = 0;
+  private static final System.Logger log = System.getLogger("app");
 
+  private static final int maxDepth = 10;
+  private final String path;
   private final List<ModelProjectMaven> topMavenProjects = new ArrayList<>();
   private final ArrayDeque<ModelProjectMaven> mavenProjectStack = new ArrayDeque<>();
 
+  private int depth = 0;
+  private int totalDirCount = 0;
+
+  public ProjectFileSearch(String path) {
+    this.path = path;
+  }
+
   public static ProjectFileSearch matchProjectFiles(String path) {
-    var search = new ProjectFileSearch();
+    var search = new ProjectFileSearch(path);
     search.searchPath(path);
     return search;
   }
@@ -37,7 +48,7 @@ public class ProjectFileSearch {
 
   private void searchDirectory(File dir) {
     if (depth >= maxDepth) {
-      System.out.println("MAX DEPTH AT " + dir.getAbsolutePath());
+      log.log(DEBUG, "max directory scan depth at {0}", dir.getAbsolutePath());
       return; // max depth reached
     }
     File[] files = dir.listFiles();
@@ -85,13 +96,11 @@ public class ProjectFileSearch {
     for (File child : files) {
       if (child.isDirectory()) {
         if (child.getName().startsWith(".")) {
-          // System.out.println("skipping hidden directory " + child.getAbsolutePath());
+          // skipping hidden directory
           continue;
         }
         boolean insideMaven = !mavenProjectStack.isEmpty();
-        if (insideMaven && ignoreInsideMaven(child)) {
-          // System.out.println("skipping " + child.getAbsolutePath());
-        } else {
+        if (!insideMaven || !ignoreInsideMaven(child)) {
           depth++;
           searchDirectory(child);
           depth--;
@@ -131,5 +140,9 @@ public class ProjectFileSearch {
 
   public int totalDirectoriesSearched() {
     return totalDirCount;
+  }
+
+  public String path() {
+    return path;
   }
 }

@@ -3,6 +3,7 @@ package io.avaje.tools.devtool.data;
 import io.avaje.jsonb.Json;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 @Json
 public class MProject implements Comparable<MProject> {
@@ -62,6 +63,10 @@ public class MProject implements Comparable<MProject> {
     OTHER
   }
 
+  public String key() {
+    return path;
+  }
+
   public String name() {
     return name;
   }
@@ -114,5 +119,15 @@ public class MProject implements Comparable<MProject> {
   public MProject setType(Type type) {
     this.type = type;
     return this;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(path);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof MProject p && Objects.equals(path, p.path);
   }
 }

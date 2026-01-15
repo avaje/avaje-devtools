@@ -1,4 +1,4 @@
-package io.avaje.tools.devtool.service;
+package io.avaje.tools.devtool.state;
 
 import io.avaje.jsonb.JsonType;
 import io.avaje.jsonb.Jsonb;
@@ -12,25 +12,25 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Stream;
 
-final class DataLoader {
+final class TaskLoader {
 
     private final JsonType<TaskMeta> metaJsonType;
     private final JsonType<KBaseMeta> kBaseMetaJsonType;
 
-    DataLoader(Jsonb jsonb) {
+    TaskLoader(Jsonb jsonb) {
         this.metaJsonType = jsonb.type(TaskMeta.class);
         this.kBaseMetaJsonType = jsonb.type(KBaseMeta.class);
     }
 
-  static List<KBase> load(Jsonb jsonb, String path) {
-    return new DataLoader(jsonb).load(new File(path));
+  static List<TaskGroup> load(Jsonb jsonb, String path) {
+    return new TaskLoader(jsonb).load(new File(path));
   }
 
-  static List<KBase> load(Jsonb jsonb, File dataDirectory) {
-        return new DataLoader(jsonb).load(dataDirectory);
+  static List<TaskGroup> load(Jsonb jsonb, File dataDirectory) {
+        return new TaskLoader(jsonb).load(dataDirectory);
     }
 
-  private List<KBase> load(File dataDirectory) {
+  private List<TaskGroup> load(File dataDirectory) {
     if (!dataDirectory.exists()) {
       return List.of();
     }
@@ -41,14 +41,14 @@ final class DataLoader {
       .toList();
   }
 
-  private KBase loadKBase(File kbaseDir) {
+  private TaskGroup loadKBase(File kbaseDir) {
     KBaseMeta kBase = readKbase(kbaseDir);
     List<Task> list = fileStream(kbaseDir)
       .filter(File::isDirectory)
       .map(this::loadTask)
       .toList();
 
-    return new KBase(kBase, list);
+    return new TaskGroup(kBase, list);
   }
 
     private Task loadTask(File taskDir) {
