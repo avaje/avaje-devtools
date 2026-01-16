@@ -40,7 +40,11 @@ public class TaskRunner {
   }
 
   private void applyActions() {
-    for (TaskMeta.TaskAction action : task.meta().actions()) {
+    List<TaskMeta.TaskAction> actions = task.meta().actions();
+    if (actions == null || actions.isEmpty()) {
+      return;
+    }
+    for (TaskMeta.TaskAction action : actions) {
       switch (action.action()) {
         case "copyFile" -> {
           File sourceFile = new File(task.parentDir(), action.source());
@@ -76,14 +80,15 @@ public class TaskRunner {
     MavenTree pomChanges = MavenTree.read(taskPom);
     List<MavenDependency> list = pomChanges.dependencies().toList();
 
-    MavenTree workingPom = pom.pom();
+    // reload the working pom from file system
+    MavenTree workingPom = MavenTree.read(pom.projectFile());
     Set<String> dependencyKeys = workingPom.dependencyKeys();
     for (MavenDependency mavenDependency : list) {
       if (dependencyKeys.contains(mavenDependency.key())) {
         skippedDependencies.add(mavenDependency.key());
       } else {
         addedDependencies.add(mavenDependency.key());
-        workingPom.addDependencies(list);
+        workingPom.addDependency(mavenDependency);
       }
     }
     try {

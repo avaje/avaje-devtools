@@ -1,0 +1,7 @@
+{
+  "type": "action",
+  "displayName": "Add Ebean dependencies and plugins for Postgres",
+  "searchKeywords": "",
+  "priority": 1000,
+  "description": ""
+}
