@@ -89,6 +89,10 @@ public class ModelProjectMaven implements Comparable<ModelProjectMaven> {
     return artifactId;
   }
 
+  public String gav() {
+    return groupId + ':' + artifactId;
+  }
+
   public String name() {
     return name;
   }

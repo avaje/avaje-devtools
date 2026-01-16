@@ -21,8 +21,10 @@ public class Partial {
   }
 
   @JStache(path = "partial/search-tasks")
-  public record SearchTasks(Task first, List<Task> tasks) {
+  public record SearchTasks(Task first, List<Task> tasks, TaskAction action) {
   }
+
+  public record TaskAction(String id){}
 
   @JStache(path = "partial/search-projects")
   public record SearchProjects(List<MProject> projects) {

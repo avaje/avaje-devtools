@@ -2,13 +2,12 @@ package io.avaje.tools.devtool.service;
 
 import io.avaje.inject.Component;
 import io.avaje.tools.devtool.data.*;
-import io.avaje.tools.devtool.state.AddTasksResult;
-import io.avaje.tools.devtool.state.ApplicationRepository;
-import io.avaje.tools.devtool.state.ApplicationState;
-import io.avaje.tools.devtool.state.Task;
+import io.avaje.tools.devtool.state.*;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import static java.lang.System.Logger.Level.INFO;
 
 @Component
 public final class DataService {
@@ -16,6 +15,7 @@ public final class DataService {
   private static final System.Logger log = System.getLogger("app");
 
   private final ApplicationRepository repository;
+  private final UIState uiState = new UIState();
 
   DataService(ApplicationRepository repository) {
     this.repository = repository;
@@ -48,6 +48,12 @@ public final class DataService {
   }
 
   public List<Task> searchTasks(String search, int limit) {
+    var result = searchTasksInternal(search, limit);
+    uiState.setTasks(search, result);
+    return result;
+  }
+
+  private List<Task> searchTasksInternal(String search, int limit) {
     if (search == null) return List.of();
     String[] tokens = asTokens(search);
     return searchTasks(tokens, limit);
@@ -102,16 +108,15 @@ public final class DataService {
     return repository.addTasksSource(path);
   }
 
-  ProjectFileSearch lastProjectScan;
-
   public ProjectFileSearch scanPathForProjects(String path) {
-    lastProjectScan = ProjectFileSearch.matchProjectFiles(path);
-    return lastProjectScan;
+    var lastProjectScan = ProjectFileSearch.matchProjectFiles(path);
+    return uiState.setProjectScan(lastProjectScan);
   }
 
   public void addScannedProjects() {
-    if (lastProjectScan != null) {
-      repository.addScannedProjects(lastProjectScan);
+    var lastScan = uiState.lastProjectScan();
+    if (lastScan != null) {
+      repository.addScannedProjects(lastScan);
     } else {
       log.log(System.Logger.Level.WARNING, "No scanned projects to add");
     }
@@ -121,4 +126,24 @@ public final class DataService {
     return repository.addTasksSource(path);
   }
 
+  public ModelProjectMaven workingDirectoryPom() {
+    return repository.workingDirectoryPom();
+  }
+
+  public void taskRun(String taskId) {
+    Task currentTask = uiState.currentTask();
+    if (currentTask != null && currentTask.uniqueTaskId().equals(taskId)) {
+      runTask(currentTask);
+    } else {
+      log.log(System.Logger.Level.WARNING, "No current task or taskId mismatch for running task: " + taskId);
+    }
+  }
+
+  private void runTask(Task currentTask) {
+    log.log(INFO, "Running task: " + currentTask.uniqueTaskId());
+  }
+
+  public boolean hasCurrentProject() {
+    return workingDirectoryPom() != null;
+  }
 }

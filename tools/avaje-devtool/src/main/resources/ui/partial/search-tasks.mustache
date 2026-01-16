@@ -1,6 +1,10 @@
 <div id="detail-summary" class="card p-1" hx-swap-oob="true">
   <div class="card-body">
       <h4 class="card-title">{{ first.displayName }}</h4>
+      {{#action}}
+        <a class="btn btn-sm btn-secondary" hx-post="/task/run/{{ action.id }}" hx-target="#action-result">Run Task</a>
+        <div id="action-result"></div>
+      {{/action}}
       <p>{{ first.description }}</p>
       <div>{{{ first.preview }}}</div>
   </div>

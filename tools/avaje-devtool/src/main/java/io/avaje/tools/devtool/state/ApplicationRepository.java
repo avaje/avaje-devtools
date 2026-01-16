@@ -7,6 +7,7 @@ import io.avaje.jsonb.Jsonb;
 import io.avaje.tools.devtool.data.*;
 import io.avaje.tools.devtool.service.ModelProjectMaven;
 import io.avaje.tools.devtool.service.ProjectFileSearch;
+import io.avaje.tools.util.maven.MavenTree;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -27,9 +28,15 @@ public class ApplicationRepository {
   private final ApplicationState state = new ApplicationState();
   private File stateFile;
 
+  private ModelProjectMaven workingDirectoryPom;
+
   public ApplicationRepository(Jsonb jsonb) {
     this.jsonb = jsonb;
     this.applicationModelJson = jsonb.type(ApplicationModel.class);
+  }
+
+  public ModelProjectMaven workingDirectoryPom() {
+    return workingDirectoryPom;
   }
 
   /**
@@ -62,6 +69,17 @@ public class ApplicationRepository {
       } catch (IOException e) {
         throw new UncheckedIOException(e);
       }
+    }
+    initialiseLocalProject();
+  }
+
+  private void initialiseLocalProject() {
+    File localPom = new File("pom.xml");
+    if (localPom.exists()) {
+      MavenTree mavenTree = MavenTree.read(localPom);
+      String relativePath = "";
+      workingDirectoryPom = new ModelProjectMaven(mavenTree, relativePath, localPom, null);
+      log.log(INFO, "Loaded local working directory pom.xml at " + localPom.getAbsolutePath());
     }
   }
 

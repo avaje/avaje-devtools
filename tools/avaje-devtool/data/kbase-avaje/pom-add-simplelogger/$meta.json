@@ -1,0 +1,19 @@
+{
+  "type": "add",
+  "displayName": "Add avaje-simplelogger dependency and configuration",
+  "searchKeywords": "avaje simplelogger logging properties",
+  "priority": 1000,
+  "description": "",
+  "actions": [
+    {
+      "action": "copyFile",
+      "source":"avaje-logger.proprties",
+      "target":"src/main/resources/avaje-logger.properties"
+    },
+    {
+      "action": "copyFile",
+      "source":"avaje-logger-test.proprties",
+      "target":"src/test/resources/avaje-logger.properties"
+    }
+  ]
+}

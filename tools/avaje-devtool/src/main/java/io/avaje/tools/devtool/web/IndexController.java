@@ -28,8 +28,11 @@ final class IndexController {
 
   @Get
   Page.Index home() {
+    ModelProjectMaven localPom = dataService.workingDirectoryPom();
+    var context = localPom == null ? null : new Page.WorkingContext(localPom.projectFile().getAbsolutePath(), localPom.gav());
+
     ApplicationState data = dataService.data();
-    return new Page.Index(data.tasks().size(), data.tasks().size());
+    return new Page.Index(data.tasks().size(), data.tasks().size(), context);
   }
 
   @HxRequest
@@ -47,8 +50,13 @@ final class IndexController {
   @Post("search")
   Partial.SearchTasks searchTasks(String search) {
     List<Task> tasks = dataService.searchTasks(search, 10);
-    var first = !tasks.isEmpty() ? tasks.getFirst() : null;
-    return new Partial.SearchTasks(first, tasks);
+    if (tasks.isEmpty()) {
+      return new Partial.SearchTasks(null, tasks, null);
+    }
+    var first = tasks.getFirst();
+    boolean activeProject = dataService.hasCurrentProject();
+    var action = !activeProject ? null : new Partial.TaskAction(first.uniqueTaskId());
+    return new Partial.SearchTasks(first, tasks, action);
   }
 
   @HxRequest
@@ -176,6 +184,12 @@ final class IndexController {
   void addScannedProjects(Context context) {
     dataService.addScannedProjects();
     context.html("<p>Scanned projects added</p>");
+  }
+
+  @HxRequest
+  @Post("task/run/{taskId}")
+  void taskRun(String taskId) {
+    dataService.taskRun(taskId);
   }
 
 }
