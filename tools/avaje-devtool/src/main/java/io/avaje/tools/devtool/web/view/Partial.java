@@ -3,6 +3,7 @@ package io.avaje.tools.devtool.web.view;
 import io.avaje.tools.devtool.data.KBaseSource;
 import io.avaje.tools.devtool.data.MProject;
 import io.avaje.tools.devtool.data.ProjectsSource;
+import io.avaje.tools.devtool.state.AddTasksResult;
 import io.avaje.tools.devtool.state.Task;
 import io.avaje.tools.devtool.service.ModelProjectMaven;
 import io.jstach.jstache.JStache;
@@ -59,6 +60,10 @@ public class Partial {
   public static class ViewNewProjectForm {
   }
 
+  @JStache(path = "partial/view-new-tasks-form")
+  public static class ViewNewTasksForm {
+  }
+
   @JStache(path = "partial/view-projects")
   public static class ViewProjects {
   }
@@ -68,5 +73,9 @@ public class Partial {
     List<ModelProjectMaven> projects,
     long allCount,
     int directoriesSearched) {
+  }
+
+  @JStache(path = "partial/add-task-source-result")
+  public record AddTaskSourceResult(AddTasksResult result) {
   }
 }

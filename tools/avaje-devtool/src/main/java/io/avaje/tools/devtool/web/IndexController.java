@@ -8,6 +8,7 @@ import io.avaje.tools.devtool.data.ProjectsSource;
 import io.avaje.tools.devtool.service.DataService;
 import io.avaje.tools.devtool.service.ModelProjectMaven;
 import io.avaje.tools.devtool.service.ProjectFileSearch;
+import io.avaje.tools.devtool.state.AddTasksResult;
 import io.avaje.tools.devtool.state.ApplicationState;
 import io.avaje.tools.devtool.state.Task;
 import io.avaje.tools.devtool.web.view.Page;
@@ -107,8 +108,8 @@ final class IndexController {
   @Form
   @Post("addSource")
   void addSource(String path, Context context) {
-    long count = dataService.addSource(path);
-    context.html("<p>Added source with " + count + " new tasks</p>");
+    var result = dataService.addSource(path);
+    context.html("<p>Added source with " + result.addedCount() + " new tasks</p>");
   }
 
   @Produces(MediaType.TEXT_HTML)
@@ -134,6 +135,12 @@ final class IndexController {
   }
 
   @HxRequest
+  @Get("viewNewTasksForm")
+  Partial.ViewNewTasksForm viewNewTasksForm() {
+    return new Partial.ViewNewTasksForm();
+  }
+
+  @HxRequest
   @Get("viewProjects")
   Partial.ViewProjects viewProjects() {
     return new Partial.ViewProjects();
@@ -153,6 +160,14 @@ final class IndexController {
     long allCount = scan.all().count();
 
     return new Partial.ScanProjectsResult(projects, allCount, directoriesSearched);
+  }
+
+  @HxRequest
+  @Form
+  @Post("addTaskSource")
+  Partial.AddTaskSourceResult addTaskSource(String path) {
+    AddTasksResult result = dataService.addTaskSource(path);
+    return new Partial.AddTaskSourceResult(result);
   }
 
   @HxRequest

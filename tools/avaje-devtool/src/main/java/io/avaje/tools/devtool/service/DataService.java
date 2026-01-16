@@ -2,6 +2,7 @@ package io.avaje.tools.devtool.service;
 
 import io.avaje.inject.Component;
 import io.avaje.tools.devtool.data.*;
+import io.avaje.tools.devtool.state.AddTasksResult;
 import io.avaje.tools.devtool.state.ApplicationRepository;
 import io.avaje.tools.devtool.state.ApplicationState;
 import io.avaje.tools.devtool.state.Task;
@@ -97,7 +98,7 @@ public final class DataService {
       .toList();
   }
 
-  public long addSource(String path) {
+  public AddTasksResult addSource(String path) {
     return repository.addTasksSource(path);
   }
 
@@ -114,6 +115,10 @@ public final class DataService {
     } else {
       log.log(System.Logger.Level.WARNING, "No scanned projects to add");
     }
-
   }
+
+  public AddTasksResult addTaskSource(String path) {
+    return repository.addTasksSource(path);
+  }
+
 }

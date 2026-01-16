@@ -15,8 +15,4 @@ public record TaskMeta(
                 ? displayName.toLowerCase()
                 : (displayName + " " + searchKeywords).toLowerCase();
     }
-
-  public String key() {
-    return type + ":" + displayName;
-  }
 }

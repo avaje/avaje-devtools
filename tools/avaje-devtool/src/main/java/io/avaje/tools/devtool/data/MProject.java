@@ -6,11 +6,12 @@ import java.util.Comparator;
 import java.util.Objects;
 
 @Json
-public class MProject implements Comparable<MProject> {
+public class MProject {
 
-  private static final Comparator<MProject> M_PROJECT_COMPARATOR =
+  public static final Comparator<MProject> GAV_ORDER =
     Comparator.comparing(MProject::groupId)
-      .thenComparing(MProject::artifactId);
+      .thenComparing(MProject::artifactId)
+      .thenComparing(MProject::path);
 
   private String name;
   private String groupId;
@@ -20,11 +21,6 @@ public class MProject implements Comparable<MProject> {
   private String relativePath;
   private Type type;
   private String searchText;
-
-  @Override
-  public int compareTo(MProject other) {
-    return M_PROJECT_COMPARATOR.compare(this, other);
-  }
 
   public boolean matchAll(String[] tokens) {
     for (String token : tokens) {

@@ -13,9 +13,9 @@ import java.util.Objects;
  * @param path The directory path that contains the projects
  */
 @Json
-public record ProjectsSource(String name, String type, String path) implements Comparable<ProjectsSource> {
+public record ProjectsSource(String name, String type, String path) {
 
-  private static final Comparator<ProjectsSource> ORDERING = Comparator
+  public static final Comparator<ProjectsSource> NAME_ORDER = Comparator
     .comparing(ProjectsSource::name)
     .thenComparing(ProjectsSource::path);
 
@@ -38,8 +38,4 @@ public record ProjectsSource(String name, String type, String path) implements C
     return Objects.hash(path);
   }
 
-  @Override
-  public int compareTo(ProjectsSource other) {
-    return ORDERING.compare(this, other);
-  }
 }

@@ -2,13 +2,12 @@ package io.avaje.tools.devtool.state;
 
 import io.avaje.tools.devtool.data.TaskMeta;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-public record Task(TaskMeta meta, String preview, String all) implements Comparable<Task> {
+public record Task(String uniqueTaskId, TaskMeta meta, String preview, String all, String displayOrder) {
 
-  public String key() {
-    return meta.key();
-  }
+  public static final Comparator<Task> DISPLAY_ORDER = Comparator.comparing(Task::displayName);
 
   public String displayName() {
     return meta.displayName();
@@ -32,17 +31,12 @@ public record Task(TaskMeta meta, String preview, String all) implements Compara
   }
 
   @Override
-  public int compareTo(Task other) {
-    return Integer.compare(meta.priority(), other.meta.priority());
-  }
-
-  @Override
   public boolean equals(Object obj) {
-    return obj instanceof Task t && meta.key().equals(t.meta.key());
+    return obj instanceof Task t && uniqueTaskId.equals(t.uniqueTaskId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(meta.key());
+    return Objects.hash(uniqueTaskId);
   }
 }

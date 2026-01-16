@@ -67,26 +67,13 @@ public class ApplicationRepository {
 
   private void initialiseApplicationState(ApplicationModel loadedModel) {
 
-    var projects = loadedModel.projects().stream()
-        .distinct()
-        .sorted()
-        .toList();
-
-    var dataSources = loadedModel.dataSources().stream()
-      .distinct()
-      .sorted()
-      .toList();
-
-    var projectSources = loadedModel.projectSources().stream()
-      .distinct()
-      .sorted()
-      .toList();
+    var projects = loadedModel.projects();
+    var dataSources = loadedModel.dataSources();
+    var projectSources = loadedModel.projectSources();
 
     List<Task> tasks = loadedModel.dataSources().stream()
       .flatMap(s -> loadDataSource(s).stream())
       .flatMap(k -> k.tasks().stream())
-      .distinct()
-      .sorted()
       .toList();
 
     state.init(projects, dataSources, projectSources, tasks);
@@ -115,10 +102,10 @@ public class ApplicationRepository {
     return userHome + rootDir.substring(1);
   }
 
-  public long addTasksSource(String path) {
+  public AddTasksResult addTasksSource(String path) {
     File dir = new File(path);
     if (!dir.exists()) {
-      return 0;
+      return new AddTasksResult(0, null, state.tasks().size());
     }
 
     var newSource = new KBaseSource(path, "directory", path);
@@ -127,11 +114,11 @@ public class ApplicationRepository {
       .flatMap(kb -> kb.tasks().stream())
       .toList();
 
-    state.addTasks(tasks);
     state.addDataSource(newSource);
+    int totalTaskCount = state.addTasks(tasks);
 
     saveProjectsFile();
-    return tasks.size();
+    return new AddTasksResult(tasks.size(), newSource, totalTaskCount);
   }
 
   /**

@@ -1,0 +1,15 @@
+<form hx-post="/addTaskSource"
+      hx-target="#add-tasks-results"
+      class="p-4">
+  <input class="input m-2" type="search"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        name="path" placeholder="Directory containing tasks...">
+  <p class="py-4 px-2 text-gray-600">
+    Enter a directory path to that contains tasks.
+  </p>
+  <div class="py-4">
+    <button class="btn btn-primary">Add tasks</button>
+  </div>
+</form>
+
+<div id="add-tasks-results"></div>
