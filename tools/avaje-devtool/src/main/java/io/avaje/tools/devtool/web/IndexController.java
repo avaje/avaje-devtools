@@ -54,8 +54,10 @@ final class IndexController {
       return new Partial.SearchTasks(null, tasks, null);
     }
     var first = tasks.getFirst();
-    boolean activeProject = dataService.hasCurrentProject();
-    var action = !activeProject ? null : new Partial.TaskAction(first.uniqueTaskId());
+    if (!first.isAction() || !dataService.hasCurrentProject()) {
+      return new Partial.SearchTasks(first, tasks, null);
+    }
+    var action = new Partial.TaskAction(first.uniqueTaskId());
     return new Partial.SearchTasks(first, tasks, action);
   }
 

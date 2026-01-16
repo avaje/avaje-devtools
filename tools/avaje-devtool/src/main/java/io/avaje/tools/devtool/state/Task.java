@@ -1,11 +1,13 @@
 package io.avaje.tools.devtool.state;
 
+import io.avaje.recordbuilder.RecordBuilder;
 import io.avaje.tools.devtool.data.TaskMeta;
 
 import java.util.Comparator;
 import java.util.Objects;
 
-public record Task(String uniqueTaskId, TaskMeta meta, String preview, String all, String displayOrder) {
+@RecordBuilder
+public record Task(String uniqueTaskId, TaskMeta meta, String preview, String all, String displayOrder, java.io.File parentDir) {
 
   public static final Comparator<Task> DISPLAY_ORDER = Comparator.comparing(Task::displayName);
 
@@ -19,6 +21,10 @@ public record Task(String uniqueTaskId, TaskMeta meta, String preview, String al
 
   public String description() {
     return meta.description();
+  }
+
+  public boolean isAction() {
+    return "action".equalsIgnoreCase(type());
   }
 
   public boolean matchAll(String[] tokens) {

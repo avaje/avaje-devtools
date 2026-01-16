@@ -14,7 +14,7 @@ public record MavenDependency (
   String type) {
 
   public String key() {
-    return groupId + ":" + artifactId;
+    return groupId + ':' + artifactId;
   }
 
   public static MavenDependencyBuilder builder() {

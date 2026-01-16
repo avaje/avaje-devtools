@@ -73,7 +73,14 @@ final class TaskLoader {
     TaskMeta taskMeta = readTaskMeta(taskDir);
     String uniqueTaskId = uniqueTaskId(taskDir.getName());
     String previewContent = readPreview(taskDir);
-    return new Task(uniqueTaskId, taskMeta, previewContent, taskMeta.allSearchKeywords(), taskMeta.displayName().toLowerCase());
+
+    return new Task(
+      uniqueTaskId,
+      taskMeta,
+      previewContent,
+      taskMeta.allSearchKeywords(),
+      taskMeta.displayName().toLowerCase(),
+      taskDir);
   }
 
   private String uniqueTaskId(String taskDir) {

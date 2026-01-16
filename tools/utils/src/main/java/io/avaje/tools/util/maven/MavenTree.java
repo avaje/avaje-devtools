@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class MavenTree {
@@ -48,6 +51,17 @@ public final class MavenTree {
       return artifactIds.getFirst().innerContent();
     }
     return null;
+  }
+
+  /**
+   * Return all the dependency groupId:artifactId keys.
+   *
+   * <p>Use this to optimally detect existing dep
+   */
+  public Set<String> dependencyKeys() {
+    return dependencies().
+      map(MavenDependency::key)
+      .collect(Collectors.toSet());
   }
 
   public boolean containsDependency(String groupId, String artifactId) {
@@ -202,13 +216,13 @@ public final class MavenTree {
   }
 
   public List<TreeNode> find(String dotPath) {
-    List<TreeNode> matching = new java.util.ArrayList<>();
+    List<TreeNode> matching = new ArrayList<>();
     projectNode.match(matching, dotPath);
     return matching;
   }
 
   List<String> asLines() {
-    List<String> lines = new java.util.ArrayList<>();
+    List<String> lines = new ArrayList<>();
     projectNode.asLines(lines);
     return lines;
   }

@@ -141,6 +141,9 @@ public final class DataService {
 
   private void runTask(Task currentTask) {
     log.log(INFO, "Running task: " + currentTask.uniqueTaskId());
+
+    var modelProjectMaven = repository.workingDirectoryPom();
+    TaskRunner.run(currentTask, modelProjectMaven);
   }
 
   public boolean hasCurrentProject() {
