@@ -14,10 +14,16 @@ import java.util.stream.Stream;
 public final class MavenTree {
 
   private final TreeNode projectNode;
+  private final String indent1;
+  private final String indent2;
+  private final String indent3;
   private TreeNode buildTag;
 
-  MavenTree(TreeNode projectNode) {
+  MavenTree(TreeNode projectNode, String baseIndent) {
     this.projectNode = projectNode;
+    this.indent1 = baseIndent;
+    this.indent2 = indent1 + indent1;
+    this.indent3 = indent1 + indent1 + indent1;
   }
 
   public static MavenTree read(File file) {
@@ -51,6 +57,14 @@ public final class MavenTree {
       return artifactIds.getFirst().innerContent();
     }
     return null;
+  }
+
+  public List<String> properties() {
+    return find("properties").stream()
+      .flatMap(n -> n.children().stream())
+      .filter(n -> !(n instanceof TagNode))
+      .map(n -> n.toString().trim())
+      .toList();
   }
 
   /**
@@ -112,29 +126,29 @@ public final class MavenTree {
     return -1;
   }
 
-  private static TreeNode buildAsTree(MavenDependency dep) {
+  private TreeNode buildAsTree(MavenDependency dep) {
     TreeNode node = new TagNode("dependency");
-    node.addChild(new LineNode("    <dependency>"));
-    node.addChild(SingleLineTagNode.from("groupId", dep.groupId(), "      "));
-    node.addChild(SingleLineTagNode.from("artifactId", dep.artifactId(), "      "));
-    node.addChild(SingleLineTagNode.from("version", dep.version(), "      "));
+    node.addChild(new LineNode(indent2 + "<dependency>"));
+    node.addChild(SingleLineTagNode.from("groupId", dep.groupId(), indent3));
+    node.addChild(SingleLineTagNode.from("artifactId", dep.artifactId(), indent3));
+    node.addChild(SingleLineTagNode.from("version", dep.version(), indent3));
     String scope = dep.scope();
     if (scope != null) {
-      node.addChild(SingleLineTagNode.from("scope", scope, "      "));
+      node.addChild(SingleLineTagNode.from("scope", scope, indent3));
     }
     String optional = dep.optional();
     if (optional != null) {
-      node.addChild(SingleLineTagNode.from("optional", optional, "      "));
+      node.addChild(SingleLineTagNode.from("optional", optional, indent3));
     }
     String type = dep.type();
     if (type != null) {
-      node.addChild(SingleLineTagNode.from("type", type, "      "));
+      node.addChild(SingleLineTagNode.from("type", type, indent3));
     }
     String classifier = dep.classifier();
     if (classifier != null) {
-      node.addChild(SingleLineTagNode.from("classifier", classifier, "      "));
+      node.addChild(SingleLineTagNode.from("classifier", classifier, indent3));
     }
-    node.addChild(new LineNode("    </dependency>"));
+    node.addChild(new LineNode(indent2 + "</dependency>"));
     return node;
   }
 
@@ -144,6 +158,24 @@ public final class MavenTree {
       return dependencies.getFirst();
     }
     return appendTag("dependencies", true, true);
+  }
+
+  public void addProperties(List<String> properties) {
+    TreeNode treeNode = findOrCreateProperties();
+    for (String property : properties) {
+      var line = indent2 + property.trim();
+      treeNode.addChildBefore(new LineNode(line), "</properties>");
+    }
+  }
+
+  TreeNode findOrCreateProperties() {
+    List<TreeNode> dependencies = find("properties");
+    if (!dependencies.isEmpty()) {
+      return dependencies.getFirst();
+    }
+    TreeNode newTag = createEmptyTag("properties", indent1, false, false);
+    projectNode.addChildBefore(newTag, Set.of("dependencies", "dependencyManagement", "build", "profiles"));
+    return newTag;
   }
 
   TreeNode obtainBuildTag() {
@@ -162,17 +194,15 @@ public final class MavenTree {
   }
 
   private TreeNode appendTag(String name, boolean whitespace, boolean endNewLine) {
-    TreeNode emptyTag = createEmptyTag(name, "  ", whitespace, endNewLine);
+    TreeNode emptyTag = createEmptyTag(name, indent1, whitespace, endNewLine);
     projectNode.addChildBefore(emptyTag, "</project>");
     return emptyTag;
   }
 
-  private TreeNode createEmptyTag(String name, String indent, boolean outerWhitespace, boolean endNewLine) {
+  private TreeNode createEmptyTag(String name, String indent, boolean startNewLine, boolean endNewLine) {
     TreeNode treeNode = new TagNode(name);
-    if(outerWhitespace) {
-      treeNode.addChild(new LineNode("\n"));
-    }
-    treeNode.addChild(new LineNode(indent + "<" + name + ">\n"));
+    var firstIndent = startNewLine ? "\n" + indent : indent;
+    treeNode.addChild(new LineNode(firstIndent + "<" + name + ">\n"));
     var lastIndent = endNewLine ? "\n" + indent : indent;
     treeNode.addChild(new LineNode(lastIndent + "</" + name + ">\n"));
     return treeNode;
@@ -182,7 +212,7 @@ public final class MavenTree {
     TreeNode buildTag = obtainBuildTag();
     return buildTag.match("plugins")
       .orElseGet(() -> {
-        TreeNode pluginsTag = createEmptyTag("plugins", "    ", false, true);
+        TreeNode pluginsTag = createEmptyTag("plugins", indent2, false, true);
         buildTag.addChildBefore(pluginsTag, "</build>");
         return pluginsTag;
       });
@@ -243,10 +273,9 @@ public final class MavenTree {
 
     TreeNode buildPlugins = findOrCreateBuildPlugins();
 
-    String pluginsIndent = "      ";
     TreeNode pluginNode = new TagNode("plugin");
     for (String asLine : asLines) {
-      pluginNode.addChild(new LineNode(pluginsIndent + asLine.substring(indent)));
+      pluginNode.addChild(new LineNode(indent3 + asLine.substring(indent)));
     }
     buildPlugins.addChildBefore(pluginNode, "</plugins>");
   }

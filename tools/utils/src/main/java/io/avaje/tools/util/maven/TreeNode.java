@@ -2,6 +2,7 @@ package io.avaje.tools.util.maven;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public sealed interface TreeNode permits LineNode, SingleLineTagNode, TagNode {
 
@@ -14,6 +15,10 @@ public sealed interface TreeNode permits LineNode, SingleLineTagNode, TagNode {
   }
 
   default void addChild(TreeNode tagNode) {
+    throw new UnsupportedOperationException();
+  }
+
+  default void addChildBefore(TreeNode child, Set<String> tags) {
     throw new UnsupportedOperationException();
   }
 

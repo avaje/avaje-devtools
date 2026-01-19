@@ -13,6 +13,7 @@ final class TreeReader {
   private final ArrayDeque<TreeNode> tree = new ArrayDeque<>();
   private final TreeNode projectNode;
   private TreeNode currentNode;
+  private String baseIndent;
 
   static MavenTree read(File pomFile) {
     var reader = new TreeReader();
@@ -33,7 +34,6 @@ final class TreeReader {
     }
   }
 
-
   private void parseLine(String line) {
     Matcher matcher = XML_START_TAG.matcher(line);
     if (matcher.find()) {
@@ -42,6 +42,9 @@ final class TreeReader {
         // skip the root project tag
         currentNode.addChild(new LineNode(line));
         return;
+      }
+      if (baseIndent == null && tagName.equals("artifactId")  || tagName.equals("dependencies") || tagName.equals("build")) {
+        baseIndent = line.substring(0, matcher.start());
       }
       // Optionally, matcher.group(0) gives the full tag, e.g. <tag attr="...">
       var endTag = "</" + tagName + ">";
@@ -87,7 +90,7 @@ final class TreeReader {
           parseLine(line);
         }
       }
-      return new MavenTree(projectNode);
+      return new MavenTree(projectNode, baseIndent);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }

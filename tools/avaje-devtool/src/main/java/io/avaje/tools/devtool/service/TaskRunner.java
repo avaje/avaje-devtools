@@ -78,19 +78,12 @@ public class TaskRunner {
     }
     // apply pom changes
     MavenTree pomChanges = MavenTree.read(taskPom);
-    List<MavenDependency> list = pomChanges.dependencies().toList();
 
     // reload the working pom from file system
     MavenTree workingPom = MavenTree.read(pom.projectFile());
-    Set<String> dependencyKeys = workingPom.dependencyKeys();
-    for (MavenDependency mavenDependency : list) {
-      if (dependencyKeys.contains(mavenDependency.key())) {
-        skippedDependencies.add(mavenDependency.key());
-      } else {
-        addedDependencies.add(mavenDependency.key());
-        workingPom.addDependency(mavenDependency);
-      }
-    }
+    addDependencies(pomChanges, workingPom);
+    addProperties(pomChanges, workingPom);
+    addPlugins(pomChanges, workingPom);
     try {
       workingPom.write(pom.projectFile().toPath());
       log.log(INFO, "Dependencies added {0} - {1}", addedDependencies.size(), addedDependencies);
@@ -99,6 +92,30 @@ public class TaskRunner {
       }
     } catch (IOException e) {
       log.log(ERROR, "Error writing pom.xml changes to " + pom.projectFile().getAbsolutePath(), e);
+    }
+  }
+
+  private void addPlugins(MavenTree pomChanges, MavenTree workingPom) {
+    // pomChanges.plugins();
+  }
+
+  private void addProperties(MavenTree pomChanges, MavenTree workingPom) {
+    List<String> properties = pomChanges.properties();
+    if (!properties.isEmpty()) {
+      workingPom.addProperties(properties);
+    }
+  }
+
+  private void addDependencies(MavenTree pomChanges, MavenTree workingPom) {
+    Set<String> dependencyKeys = workingPom.dependencyKeys();
+
+    for (MavenDependency mavenDependency : pomChanges.dependencies().toList()) {
+      if (dependencyKeys.contains(mavenDependency.key())) {
+        skippedDependencies.add(mavenDependency.key());
+      } else {
+        addedDependencies.add(mavenDependency.key());
+        workingPom.addDependency(mavenDependency);
+      }
     }
   }
 }

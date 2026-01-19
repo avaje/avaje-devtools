@@ -97,7 +97,7 @@ final class IndexController {
   Partial.Tasks tasks() {
     var tasks = dataService.data().tasks();
     var first = !tasks.isEmpty() ? tasks.getFirst() : null;
-    return new Partial.Tasks(first, tasks);
+    return new Partial.Tasks(first, tasks, null);
   }
 
   @HxRequest

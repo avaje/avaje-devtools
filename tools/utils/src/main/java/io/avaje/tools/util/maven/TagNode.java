@@ -3,6 +3,7 @@ package io.avaje.tools.util.maven;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 final class TagNode implements TreeNode {
 
@@ -33,6 +34,20 @@ final class TagNode implements TreeNode {
   @Override
   public void addChild(TreeNode child) {
     children.add(child);
+  }
+
+  @Override
+  public void addChildBefore(TreeNode child, Set<String> tags) {
+    for (TreeNode treeNode : children) {
+      if (treeNode instanceof TagNode tag) {
+        if (tags.contains(tag.name())) {
+          int index = children.indexOf(treeNode);
+          children.add(index, child);
+          return;
+        }
+      }
+    }
+    addChildBefore(child, "</project>");
   }
 
   @Override

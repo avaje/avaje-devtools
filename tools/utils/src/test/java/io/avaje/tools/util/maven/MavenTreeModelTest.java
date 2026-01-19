@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,6 +56,8 @@ class MavenTreeModelTest {
 
     pom.addDependency(MavenDependency.of("io.add:added-artifact:1.0.0").build());
     pom.addDependency(MavenDependency.of("io.add:my-test-artifact:1:test").build());
+
+    pom.addProperties(List.of("<my.one>one-value</my.one>", "<my.two>two-value</my.two>"));
 
     File out = new File("target/noBuild-pom2-mod1.xml");
     pom.write(out.toPath());

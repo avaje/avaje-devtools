@@ -17,7 +17,7 @@ public class Partial {
   public record InitialEmpty() {
   }
   @JStache(path = "partial/initial-tasks")
-  public record InitialTasks(Task first, List<Task> tasks) {
+  public record InitialTasks(Task first, List<Task> tasks, TaskAction action) {
   }
 
   @JStache(path = "partial/search-tasks")
@@ -43,7 +43,7 @@ public class Partial {
   }
 
   @JStache(path = "partial/tasks")
-  public record Tasks(Task first, Collection<Task> tasks) {
+  public record Tasks(Task first, Collection<Task> tasks, TaskAction action) {
   }
 
   @JStache(path = "partial/sources")
