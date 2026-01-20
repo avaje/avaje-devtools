@@ -2,32 +2,27 @@
 <p>
   Refer <a target="_self" href="https://sdkman.io/install/">https://sdkman.io/install</a>
 </p>
-<form>
-<pre hx-post="/copyToClipboard" hx-target="#toaster">
-  <code>curl -s "https://get.sdkman.io" | bash</code>
-  <textarea name="clip" style="display: none;">curl -s "https://get.sdkman.io" | bash</textarea>
-</pre>
-</form>
+<div class="code-container">
+  <button class="copy-btn" onclick="copyCode(this)">copy</button>
+  <pre><code>curl -s "https://get.sdkman.io" | bash</code></pre>
+</div>
 
-<form>
-<pre hx-post="/copyToClipboard" hx-target="#toaster">
-  <code class="language-bash">source "$HOME/.sdkman/bin/sdkman-init.sh"</code>
-  <textarea name="clip" style="display: none;">source "$HOME/.sdkman/bin/sdkman-init.sh</textarea>
-</pre>
-</form>
+<div class="code-container">
+  <button class="copy-btn" onclick="copyCode(this)">copy</button>
+  <pre><code class="language-bash">source "$HOME/.sdkman/bin/sdkman-init.sh"</code></pre>
+</div>
 
 <h3>Install Java</h3>
-<form>
-<pre hx-post="/copyToClipboard" hx-target="#toaster">
-  <code class="language-bash">sdk install java 25.0.1-graal</code>
-  <textarea name="clip" style="display: none;">sdk install java 25.0.1-graal</textarea>
-</pre>
-</form>
+<div class="code-container">
+  <button class="copy-btn" onclick="copyCode(this)">copy</button>
+  <pre><code class="language-bash">sdk install java 25.0.1-graal</code></pre>
+</div>
 
 <h1>Install Maven</h1>
-<pre>
-    <code class="language-bash">sdk install maven 3.9.12</code>
-</pre>
+<div class="code-container">
+  <button class="copy-btn" onclick="copyCode(this)">copy</button>
+  <pre><code class="language-bash">sdk install maven 3.9.12</code></pre>
+</div>
 
 <h2>Install IntelliJ</h2>
 <p>

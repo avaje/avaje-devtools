@@ -30,6 +30,28 @@
       hljs.highlightElement(el);
     });
   });
+  async function copyCode(button) {
+      // Select the <code> element next to the button
+      const codeBlock = button.parentElement.querySelector('code');
+      const textToCopy = codeBlock.innerText;
 
+      try {
+          await navigator.clipboard.writeText(textToCopy);
+
+          // Visual feedback
+          const originalText = button.innerText;
+          button.innerText = "Copied!";
+          button.classList.add("success");
+
+          // Reset button after 2 seconds
+          setTimeout(() => {
+              button.innerText = originalText;
+              button.classList.remove("success");
+          }, 2000);
+      } catch (err) {
+          console.error("Failed to copy:", err);
+          button.innerText = "Error";
+      }
+  }
   </script>
 </html>

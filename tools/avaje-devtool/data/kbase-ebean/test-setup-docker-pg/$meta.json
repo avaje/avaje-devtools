@@ -1,7 +1,13 @@
 {
-  "type": "docs",
-  "displayName": "Ebean test setup for Postgres docker container",
-  "searchKeywords": "",
+  "type": "action",
+  "displayName": "Ebean test containers setup for Postgis",
+  "searchKeywords": "postgres",
   "priority": 1000,
-  "description": ""
+  "description": "",
+  "actions": [
+    {
+      "action": "addCode",
+      "source":"config.TestDatabaseSetup.java"
+    }
+  ]
 }

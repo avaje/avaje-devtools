@@ -72,7 +72,7 @@ final class TaskLoader {
   private Task loadTask(File taskDir) {
     TaskMeta taskMeta = readTaskMeta(taskDir);
     String uniqueTaskId = uniqueTaskId(taskDir.getName());
-    String previewContent = readPreview(taskDir);
+    String previewContent = PreviewContent.read(taskDir);
 
     return new Task(
       uniqueTaskId,
@@ -99,17 +99,7 @@ final class TaskLoader {
     return files != null ? Stream.of(files) : Stream.of();
   }
 
-  private String readPreview(File taskDir) {
-    var file = new File(taskDir, "preview.html");
-    if (!file.exists()) {
-      return "";
-    }
-    try {
-      return Files.readString(file.toPath());
-    } catch (IOException e) {
-      return "";
-    }
-  }
+
 
   private TaskMeta readTaskMeta(File taskDir) {
     try (var is = new FileInputStream(new File(taskDir, "$meta.json"))) {

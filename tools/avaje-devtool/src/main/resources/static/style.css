@@ -41,3 +41,27 @@ nav#top-nav a.active :hover {
   border-bottom: 3px solid var(--color-green-600);
 }
 
+.code-container {
+    position: relative;
+    background: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    padding: 2px 5px;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-size: 8px;
+}
+
+.copy-btn:hover {
+    background: #0056b3;
+}
+
