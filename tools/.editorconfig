@@ -11,3 +11,7 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 spaces_around_operators = true
 max_line_length = 130
+
+[*.xml]
+indent_size = 4
+

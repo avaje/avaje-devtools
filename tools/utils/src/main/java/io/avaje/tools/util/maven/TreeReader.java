@@ -43,7 +43,7 @@ final class TreeReader {
         currentNode.addChild(new LineNode(line));
         return;
       }
-      if (baseIndent == null && tagName.equals("artifactId")  || tagName.equals("dependencies") || tagName.equals("build")) {
+      if (baseIndent == null && isTopLevelElement(tagName)) {
         baseIndent = line.substring(0, matcher.start());
       }
       // Optionally, matcher.group(0) gives the full tag, e.g. <tag attr="...">
@@ -73,6 +73,13 @@ final class TreeReader {
     }
 
     currentNode.addChild(new LineNode(line));
+  }
+
+  private static boolean isTopLevelElement(String tagName) {
+    return tagName.equals("parent")
+      || tagName.equals("artifactId")
+      || tagName.equals("dependencies")
+      || tagName.equals("build");
   }
 
   private static final Pattern EMPTY_XML_TAG = Pattern.compile("<\\s*([a-zA-Z0-9:_-]+)\\s*/>");

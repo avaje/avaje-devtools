@@ -4,7 +4,6 @@ import io.avaje.htmx.api.Html;
 import io.avaje.htmx.api.HxRequest;
 import io.avaje.http.api.*;
 import io.avaje.jex.http.Context;
-import io.avaje.tools.devtool.data.ProjectsSource;
 import io.avaje.tools.devtool.service.DataService;
 import io.avaje.tools.devtool.service.ModelProjectMaven;
 import io.avaje.tools.devtool.service.ProjectFileSearch;
@@ -190,8 +189,10 @@ final class IndexController {
 
   @HxRequest
   @Post("task/run/{taskId}")
-  void taskRun(String taskId) {
-    dataService.taskRun(taskId);
+  Partial.RunTaskResult taskRun(String taskId) {
+    List<String> output = dataService.taskRun(taskId);
+    return new Partial.RunTaskResult(output);
+
   }
 
 }

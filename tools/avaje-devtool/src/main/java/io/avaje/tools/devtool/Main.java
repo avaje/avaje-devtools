@@ -26,7 +26,7 @@ public class Main {
                 .title("avaje devtool")
                 .width(1000)
                 .height(800)
-                .url("http://localhost:" + port)
+                .navigate("http://localhost:" + port)
                 .build();
 
         wv.setIcon(Main.class.getResource("/static/favicon.ico").toURI());

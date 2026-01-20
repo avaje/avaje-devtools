@@ -157,7 +157,7 @@ public final class MavenTree {
     if (!dependencies.isEmpty()) {
       return dependencies.getFirst();
     }
-    return appendTag("dependencies", true, true);
+    return appendTag("dependencies", false, true);
   }
 
   public void addProperties(List<String> properties) {

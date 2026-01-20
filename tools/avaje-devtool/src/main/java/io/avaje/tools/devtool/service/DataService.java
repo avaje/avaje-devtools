@@ -130,20 +130,22 @@ public final class DataService {
     return repository.workingDirectoryPom();
   }
 
-  public void taskRun(String taskId) {
+  public List<String> taskRun(String taskId) {
     Task currentTask = uiState.currentTask();
     if (currentTask != null && currentTask.uniqueTaskId().equals(taskId)) {
-      runTask(currentTask);
+      return runTask(currentTask);
     } else {
-      log.log(System.Logger.Level.WARNING, "No current task or taskId mismatch for running task: " + taskId);
+      String msg = "No current task or taskId mismatch for running task: " + taskId;
+      log.log(System.Logger.Level.WARNING, msg);
+      return List.of(msg);
     }
   }
 
-  private void runTask(Task currentTask) {
+  private List<String> runTask(Task currentTask) {
     log.log(INFO, "Running task: " + currentTask.uniqueTaskId());
 
     var modelProjectMaven = repository.workingDirectoryPom();
-    TaskRunner.run(currentTask, modelProjectMaven);
+    return TaskRunner.run(currentTask, modelProjectMaven);
   }
 
   public boolean hasCurrentProject() {
