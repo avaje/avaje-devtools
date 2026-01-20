@@ -18,10 +18,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <properties>
-    <beforeOne>one-value</beforeOne>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>

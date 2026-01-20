@@ -1,5 +1,6 @@
 package io.avaje.tools.devtool.service;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -8,9 +9,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ProjectFileSearchTest {
 
+  @Disabled
   @Test
   void search() {
-    String path = "~/Documents/github/eroad";
+    String path = "~/Documents/github/avaje";
     ProjectFileSearch search = ProjectFileSearch.matchProjectFiles(path);
     System.out.println("Directories searched: " + search.totalDirectoriesSearched());
 
