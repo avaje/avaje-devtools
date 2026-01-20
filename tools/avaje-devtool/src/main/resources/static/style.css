@@ -45,16 +45,20 @@ nav#top-nav a.active :hover {
     position: relative;
     background: #f4f4f4;
     padding: 10px;
+    margin: 20px 5px;
     border-radius: 5px;
 }
 
+.code-container pre code.hljs {
+   padding: 0.5em;
+}
 .copy-btn {
     position: absolute;
     top: 1px;
     right: 1px;
     padding: 2px 5px;
     cursor: pointer;
-    background: #007bff;
+    background: #81addb;
     color: white;
     border: none;
     border-radius: 3px;

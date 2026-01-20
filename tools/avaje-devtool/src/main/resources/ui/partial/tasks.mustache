@@ -4,17 +4,16 @@
     <a class="" hx-get="/sources" hx-target="#content">sources</a>
 </nav>
 
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-5 gap-4">
 
-      <div class="pr-4">
+      <div class="pr-4 col-span-2">
         <input class="input m-2" type="search"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                name="search" placeholder="Search tasks..."
                id="task-search-input"
                hx-post="/search"
                hx-trigger="input changed delay:200ms, keyup[key=='Enter']"
-               hx-target="#search-results"
-               ">
+               hx-target="#search-results">
 
         <div id="search-results">
           <table class="table">
@@ -30,7 +29,7 @@
         </div>
       </div>
 
-      <div id="detail-summary" class="card p-1 bg-muted">
+      <div id="detail-summary" class="col-span-3 card p-1 bg-muted">
         <div class="card-body p-2">
             <h4 class="card-title">{{ first.displayName }}</h4>
             {{#action}}
