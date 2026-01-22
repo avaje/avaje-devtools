@@ -30,12 +30,10 @@ jobs:
 
       - name: Build with Maven
         working-directory: tools
-        run:   |
-          mvn clean package -Pnative
+        run: mvn clean package -Pnative
 
       - name: Upload binary
         uses: actions/upload-artifact@v5
-        working-directory: tools
         with:
           name: avaje-devtool-${{ matrix.os }}
-          path: avaje-devtool/target/avaje-devtool*
+          path: tools/avaje-devtool/target/avaje-devtool*
