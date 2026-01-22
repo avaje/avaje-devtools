@@ -2,7 +2,7 @@
   <h4 class="card-title">{{ first.displayName }}</h4>
   {{#action}}
     <div class="text-right p-2">
-      <button class="btn btn-sm btn-primary" hx-post="/task/run/{{ action.id }}" hx-target="#action-result">Run Task</button>
+      <button tabindex="0" class="btn btn-sm btn-primary" hx-post="/task/run/{{ action.id }}" hx-target="#action-result">Run Task</button>
     </div>
     <div id="action-result"></div>
   {{/action}}

@@ -3,7 +3,7 @@
       <h4 class="card-title">{{ first.displayName }}</h4>
       {{#action}}
         <div class="text-right p-2">
-          <button class="btn btn-sm btn-primary" hx-post="/task/run/{{ action.id }}" hx-target="#action-result">Run Task</button>
+          <button tabindex="0" class="btn btn-sm btn-primary" hx-post="/task/run/{{ action.id }}" hx-target="#action-result">Run Task</button>
         </div>
         <div id="action-result"></div>
       {{/action}}
@@ -17,9 +17,9 @@
 <table class="table">
 <tbody>
 {{#tasks}}
-  <tr tabindex="0"
+  <tr tabindex="1"
       hx-get="/task/show/{{ uniqueTaskId }}"
-      hx-trigger="keyup[keyCode==32], keyup[keyCode=13]"
+      hx-trigger="click, keyup[keyCode==32], keyup[keyCode=13]"
       hx-target="#detail-summary">
     <td style="text-wrap-mode: wrap;">{{ displayName }}</td>
     <td>{{ type }}</td>
