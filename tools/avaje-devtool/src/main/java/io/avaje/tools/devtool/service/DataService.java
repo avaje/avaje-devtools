@@ -151,4 +151,8 @@ public final class DataService {
   public boolean hasCurrentProject() {
     return workingDirectoryPom() != null;
   }
+
+  public Task findTask(String taskId) {
+    return uiState.setCurrentTask(repository.findTask(taskId));
+  }
 }

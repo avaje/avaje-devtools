@@ -1,0 +1,13 @@
+<div class="card-body p-2">
+  <h4 class="card-title">{{ first.displayName }}</h4>
+  {{#action}}
+    <div class="text-right p-2">
+      <button class="btn btn-sm btn-primary" hx-post="/task/run/{{ action.id }}" hx-target="#action-result">Run Task</button>
+    </div>
+    <div id="action-result"></div>
+  {{/action}}
+  <div id="task-detail" class="p-2 bg-background">
+    <p>{{ first.description }}</p>
+    <div>{{{ first.preview }}}</div>
+  </div>
+</div>

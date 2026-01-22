@@ -12,7 +12,7 @@
                name="search" placeholder="Search tasks..."
                id="task-search-input"
                hx-post="/search"
-               hx-trigger="input changed delay:200ms, keyup[key=='Enter']"
+               hx-trigger="input changed delay:200ms"
                hx-target="#search-results">
 
         <div id="search-results">
@@ -34,7 +34,7 @@
             <h4 class="card-title">{{ first.displayName }}</h4>
             {{#action}}
               <div class="text-right p-2">
-                <a class="btn btn-sm btn-primary" hx-post="/task/run/{{ action.id }}" hx-target="#action-result">Run Task</a>
+                <button class="btn btn-sm btn-primary" hx-post="/task/run/{{ action.id }}" hx-target="#action-result">Run Task</button>
               </div>
               <div id="action-result"></div>
             {{/action}}

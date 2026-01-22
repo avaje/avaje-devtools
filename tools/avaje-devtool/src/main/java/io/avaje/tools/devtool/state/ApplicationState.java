@@ -6,6 +6,8 @@ import io.avaje.tools.devtool.data.MProject;
 import io.avaje.tools.devtool.data.ProjectsSource;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public final class ApplicationState {
 
@@ -18,6 +20,7 @@ public final class ApplicationState {
   private List<MProject> sortedProjects = new ArrayList<>();
   private List<KBaseSource> sortedDataSources = new ArrayList<>();
   private List<ProjectsSource> sortedProjectSources = new ArrayList<>();
+  private final Map<String, Task> taskMap = new ConcurrentHashMap<>();
 
   public List<MProject> projects() {
     return sortedProjects;
@@ -66,6 +69,9 @@ public final class ApplicationState {
       tasks.putIfAbsent(newTask.uniqueTaskId(), newTask);
     }
     sortedTasks = tasks.values().stream().sorted(Task.DISPLAY_ORDER).toList();
+    var newMap = sortedTasks.stream().collect(Collectors.toMap(Task::uniqueTaskId, t -> t));
+    taskMap.clear();
+    taskMap.putAll(newMap);
     return tasks.size();
   }
 
@@ -98,5 +104,9 @@ public final class ApplicationState {
     addTasks(loadedTasks);
     addDataSources(loadedSources);
     addProjectSources(loadedProjectSources);
+  }
+
+  public Task findTask(String taskId) {
+    return taskMap.get(taskId);
   }
 }

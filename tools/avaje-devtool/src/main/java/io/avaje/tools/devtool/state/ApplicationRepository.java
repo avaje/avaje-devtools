@@ -169,4 +169,8 @@ public class ApplicationRepository {
     p.setSearchText(loadedMavenPom.searchText());
     return p;
   }
+
+  public Task findTask(String taskId) {
+    return state.findTask(taskId);
+  }
 }

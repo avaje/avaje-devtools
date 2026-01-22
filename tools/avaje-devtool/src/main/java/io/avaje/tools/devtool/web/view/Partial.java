@@ -84,4 +84,9 @@ public class Partial {
   @JStache(path = "partial/run-task-result")
   public record RunTaskResult(List<String> output) {
   }
+
+  @JStache(path = "partial/show-task")
+  public record ShowTask(Task first, TaskAction action) {
+  }
+
 }

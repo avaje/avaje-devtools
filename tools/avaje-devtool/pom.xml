@@ -26,8 +26,8 @@
 
         <dependency>
             <groupId>io.avaje.webview</groupId>
-            <artifactId>avaje-webview</artifactId>
-            <version>0.11</version>
+            <artifactId>avaje-webview-platform</artifactId>
+            <version>0.12</version>
         </dependency>
 
         <dependency>

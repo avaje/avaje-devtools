@@ -192,7 +192,17 @@ final class IndexController {
   Partial.RunTaskResult taskRun(String taskId) {
     List<String> output = dataService.taskRun(taskId);
     return new Partial.RunTaskResult(output);
+  }
 
+  @HxRequest
+  @Get("task/show/{taskId}")
+  Partial.ShowTask showTask(String taskId) {
+    Task task = dataService.findTask(taskId);
+    if (task == null || !task.isAction() || !dataService.hasCurrentProject()) {
+      return new Partial.ShowTask(task, null);
+    }
+    var action = new Partial.TaskAction(task.uniqueTaskId());
+    return new Partial.ShowTask(task, action);
   }
 
 }
