@@ -29,7 +29,9 @@ jobs:
           key: build-${{ env.cache-name }}
 
       - name: maven version
+        working-directory: tools
         run: mvn --version
 
       - name: Build with Maven
+        working-directory: tools
         run: mvn clean verify
