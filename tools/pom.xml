@@ -19,6 +19,7 @@
 
     <modules>
         <module>avaje-devtool</module>
+        <module>avaje-dev-plugin</module>
         <module>utils</module>
     </modules>
 
