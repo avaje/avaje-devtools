@@ -27,7 +27,7 @@
 
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
-    <maven.version>3.10.0</maven.version>
+    <maven.version>3.10.1</maven.version>
     <surefire.useModulePath>false</surefire.useModulePath>
   </properties>
 
